@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[nômade] vault</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-main: #000000;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --nomade-blue: #007AFF; 
+            /* Capas menores: 180px é o sweet spot para grids compactos */
+            --grid-size: 180px; 
+            --radius: 10px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            padding-top: 80px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        header {
+            position: fixed;
+            top: 0; width: 100%; z-index: 100;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 15px 0;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo { font-weight: 700; letter-spacing: -1px; font-size: 18px; }
+        .logo span { color: var(--nomade-blue); }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 30px 100px 30px;
+        }
+
+        .section-header { margin-bottom: 30px; }
+        .section-title { font-size: 28px; font-weight: 700; letter-spacing: -1px; }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(var(--grid-size), 1fr));
+            gap: 25px;
+        }
+
+        .project-card {
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* CAPAS MENORES E MAIS VIBRANTES */
+        .cover-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border-radius: var(--radius);
+            margin-bottom: 10px;
+            overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .project-card:hover .cover-wrapper {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 122, 255, 0.5);
+        }
+
+        .project-info h3 {
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .project-info p {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .badge {
+            font-size: 10px;
+            color: var(--nomade-blue);
+            font-weight: 700;
+            margin-bottom: 4px;
+            display: block;
+            text-transform: uppercase;
+        }
+
+        /* PLAY ICON DISCRETO */
+        .play-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: opacity 0.2s;
+            font-size: 30px;
+        }
+
+        .project-card:hover .play-overlay {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <div class="logo">[ nômade <span>vault</span> ]</div>
+            <div style="font-size: 10px; opacity: 0.5;">LIVE_SYNC</div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="section-header">
+            <h1 class="section-title">Projetos</h1>
+        </div>
+
+        <div id="vault-grid" class="projects-grid"></div>
+    </div>
+
+    <script>
+        // GRADIENTES ALTA SATURAÇÃO (VIBE NÔMADE)
+        function getVibrantGradient(name) {
+            const hash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+            const hues = [200, 260, 280, 190, 220]; // Tons de azul, roxo e ciano
+            const baseHue = hues[hash % hues.length];
+            
+            // Saturação 90-100% e Brilho 40-50% para cores "neon"
+            return `linear-gradient(135deg, 
+                hsl(${baseHue}, 100%, 50%) 0%, 
+                hsl(${(baseHue + 40) % 360}, 100%, 40%) 100%)`;
+        }
+
+        function renderVault(folders) {
+            const grid = document.getElementById('vault-grid');
+            grid.innerHTML = '';
+
+            folders.forEach(folder => {
+                const card = document.createElement('div');
+                card.className = 'project-card';
+                
+                const bgStyle = folder.coverImg 
+                    ? `background-image: url('${folder.coverImg}'); background-size: cover;` 
+                    : `background: ${getVibrantGradient(folder.name)};`;
+
+                card.innerHTML = `
+                    <div class="cover-wrapper" style="${bgStyle}">
+                        <div class="play-overlay">▶</div>
+                    </div>
+                    <div class="project-info">
+                        <span class="badge">${folder.trackCount} TRACKS</span>
+                        <h3>${folder.name}</h3>
+                        <p>${folder.lastUpdated}</p>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Dados teste com nomes dos seus possíveis projetos
+        const myDriveFolders = [
+            { name: "Trap_Main_Vault", trackCount: 14, lastUpdated: "2h atrás", coverImg: null },
+            { name: "Demos_Prospection", trackCount: 6, lastUpdated: "Ontem", coverImg: null },
+            { name: "Drill_Sessions_2026", trackCount: 8, lastUpdated: "3 dias atrás", coverImg: null },
+            { name: "Mix_Masters_Finals", trackCount: 22, lastUpdated: "1 semana atrás", coverImg: null },
+            { name: "Synth_Loops_Pack", trackCount: 12, lastUpdated: "1 semana atrás", coverImg: null },
+            { name: "Vocal_Stems_Project", trackCount: 4, lastUpdated: "2 semanas atrás", coverImg: null },
+            { name: "Old_Sketches", trackCount: 45, lastUpdated: "1 mês atrás", coverImg: null },
+            { name: "Nômade_Sound_ID", trackCount: 2, lastUpdated: "Hoje", coverImg: null }
+        ];
+
+        renderVault(myDriveFolders);
+    </script>
+</body>
+</html>
