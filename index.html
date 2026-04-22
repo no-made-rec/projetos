@@ -8,194 +8,248 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
         :root {
-            --bg-main: #000000;
+            --bg-main: #0a0a0a;
+            --bg-card: #141414;
             --text-primary: #ffffff;
             --text-secondary: #888888;
-            --nomade-blue: #007AFF; 
-            /* Capas menores: 180px é o sweet spot para grids compactos */
-            --grid-size: 180px; 
-            --radius: 10px;
+            --nomade-blue: #007AFF;
+            --status-red: #FF3B30;
+            --status-green: #34C759;
+            --glass-bg: rgba(25, 25, 25, 0.75);
+            --radius-main: 12px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             background-color: var(--bg-main);
             color: var(--text-primary);
             font-family: 'Inter', sans-serif;
-            padding-top: 80px;
+            padding: 20px 20px 140px 20px;
             -webkit-font-smoothing: antialiased;
         }
 
         header {
-            position: fixed;
-            top: 0; width: 100%; z-index: 100;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 15px 0;
-        }
-
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 30px;
+            max-width: 1100px;
+            margin: 0 auto 50px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding-top: 20px;
         }
 
-        .logo { font-weight: 700; letter-spacing: -1px; font-size: 18px; }
+        .logo { font-weight: 700; font-size: 22px; letter-spacing: -1px; }
         .logo span { color: var(--nomade-blue); }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 30px 100px 30px;
-        }
-
-        .section-header { margin-bottom: 30px; }
-        .section-title { font-size: 28px; font-weight: 700; letter-spacing: -1px; }
-
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(var(--grid-size), 1fr));
-            gap: 25px;
-        }
-
-        .project-card {
-            cursor: pointer;
-            text-decoration: none;
-            color: inherit;
-        }
-
-        /* CAPAS MENORES E MAIS VIBRANTES */
-        .cover-wrapper {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            border-radius: var(--radius);
-            margin-bottom: 10px;
-            overflow: hidden;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-
-        .project-card:hover .cover-wrapper {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(0, 122, 255, 0.5);
-        }
-
-        .project-info h3 {
-            font-size: 14px;
-            font-weight: 600;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .project-info p {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        .badge {
-            font-size: 10px;
-            color: var(--nomade-blue);
-            font-weight: 700;
-            margin-bottom: 4px;
-            display: block;
-            text-transform: uppercase;
-        }
-
-        /* PLAY ICON DISCRETO */
-        .play-overlay {
-            position: absolute;
-            inset: 0;
+        .drive-status {
             display: flex;
             align-items: center;
-            justify-content: center;
-            background: rgba(0,0,0,0.2);
-            opacity: 0;
-            transition: opacity 0.2s;
-            font-size: 30px;
+            gap: 8px;
+            padding: 6px 14px;
+            background: #1a1a1a;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            border: 1px solid transparent;
+        }
+        .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--status-red); }
+        .status-active { border-color: var(--status-green); color: var(--status-green); }
+        .status-active .status-dot { background: var(--status-green); box-shadow: 0 0 8px var(--status-green); }
+        .status-error { border-color: var(--status-red); color: var(--status-red); }
+
+        .nav-container { max-width: 1100px; margin: 0 auto 35px; }
+        .breadcrumbs { font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; cursor: pointer; }
+        .breadcrumbs span { color: var(--nomade-blue); }
+        .section-title { font-size: 36px; font-weight: 700; letter-spacing: -1.5px; }
+
+        .grid {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 30px;
         }
 
-        .project-card:hover .play-overlay {
-            opacity: 1;
+        .card { cursor: pointer; transition: transform 0.3s ease; }
+        .card:hover { transform: translateY(-4px); }
+
+        .cover {
+            width: 100%; aspect-ratio: 1/1; border-radius: var(--radius-main);
+            margin-bottom: 14px;
+            border: 1px solid rgba(255,255,255,0.03);
+            transition: border 0.3s, box-shadow 0.3s;
         }
+        .card:hover .cover { border-color: rgba(0, 122, 255, 0.5); box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
+
+        .info h3 { font-size: 15px; font-weight: 500; margin-bottom: 5px; color: #eee; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .badge {
+            display: inline-block; padding: 1px 7px; border-radius: 4px;
+            background: rgba(0, 122, 255, 0.1); color: var(--nomade-blue);
+            font-size: 9px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;
+        }
+
+        .player-pill {
+            position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 680px; background: var(--glass-bg);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.08); border-radius: 100px;
+            padding: 12px 20px; display: flex; align-items: center; gap: 18px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5); z-index: 1000;
+        }
+
+        .p-info { display: flex; align-items: center; gap: 12px; width: 170px; overflow: hidden; }
+        .p-art { width: 42px; height: 42px; border-radius: 50%; background: var(--nomade-blue); flex-shrink: 0; }
+        .p-controls { flex-grow: 1; display: flex; flex-direction: column; gap: 6px; }
+        .p-btns { display: flex; justify-content: center; gap: 25px; font-size: 18px; color: #fff; }
+        .btn-main { color: var(--nomade-blue); font-size: 26px; cursor: pointer; }
+        
+        .progress-wrapper { display: flex; align-items: center; gap: 10px; font-size: 10px; color: var(--text-secondary); }
+        .progress-bar { flex-grow: 1; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; position: relative; }
+        .progress-fill { position: absolute; height: 100%; background: var(--nomade-blue); border-radius: 2px; width: 0%; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="header-content">
-            <div class="logo">[ nômade <span>vault</span> ]</div>
-            <div style="font-size: 10px; opacity: 0.5;">LIVE_SYNC</div>
+        <div class="logo">[ nômade <span>vault</span> ]</div>
+        <div id="drive-status" class="drive-status status-error">
+            <div class="status-dot"></div>
+            SYNC
         </div>
     </header>
 
-    <div class="container">
-        <div class="section-header">
-            <h1 class="section-title">Projetos</h1>
-        </div>
-
-        <div id="vault-grid" class="projects-grid"></div>
+    <div class="nav-container">
+        <div class="breadcrumbs" onclick="goHome()">Início > <span id="path-name">Vault</span></div>
+        <h1 id="view-title" class="section-title">Meus Projetos</h1>
     </div>
 
+    <div id="grid" class="grid"></div>
+
+    <div class="player-pill">
+        <div class="p-info">
+            <div id="p-art" class="p-art"></div>
+            <div style="overflow: hidden;">
+                <div id="p-title" style="font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Nenhuma faixa</div>
+                <div style="font-size: 10px; color: var(--text-secondary);">Nômade Record's</div>
+            </div>
+        </div>
+        <div class="p-controls">
+            <div class="p-btns">
+                <span style="opacity:0.5">⏮</span>
+                <span id="play-btn" class="btn-main" onclick="togglePlay()">▶</span>
+                <span style="opacity:0.5">⏭</span>
+            </div>
+            <div class="progress-wrapper">
+                <span id="curr-time">0:00</span>
+                <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+                <span id="total-time">0:00</span>
+            </div>
+        </div>
+    </div>
+
+    <audio id="audio-player" style="display:none;"></audio>
+
     <script>
-        // GRADIENTES ALTA SATURAÇÃO (VIBE NÔMADE)
-        function getVibrantGradient(name) {
-            const hash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-            const hues = [200, 260, 280, 190, 220]; // Tons de azul, roxo e ciano
-            const baseHue = hues[hash % hues.length];
-            
-            // Saturação 90-100% e Brilho 40-50% para cores "neon"
-            return `linear-gradient(135deg, 
-                hsl(${baseHue}, 100%, 50%) 0%, 
-                hsl(${(baseHue + 40) % 360}, 100%, 40%) 100%)`;
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxMv9tdYFb2JM0I3uv1_VPpCcU10O0mIdHARDTsPd3SdCori1y4sIthbTfHUuJ5O7Ym/exec';
+        const audio = document.getElementById('audio-player');
+        const playBtn = document.getElementById('play-btn');
+        const progressFill = document.getElementById('progress-fill');
+
+        function getSoftGradient(name) {
+            const hash = name.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+            const baseHue = hash % 360;
+            return `linear-gradient(145deg, hsl(${baseHue}, 85%, 55%), hsl(${(baseHue + 25) % 360}, 80%, 45%))`;
         }
 
-        function renderVault(folders) {
-            const grid = document.getElementById('vault-grid');
+        async function loadFolder(folderId = '') {
+            const grid = document.getElementById('grid');
+            const statusBtn = document.getElementById('drive-status');
+            grid.innerHTML = '<p style="color: var(--text-secondary); padding: 20px;">Sincronizando...</p>';
+
+            try {
+                const response = await fetch(`${SCRIPT_URL}?folderId=${folderId}`);
+                const data = await response.json();
+
+                statusBtn.classList.replace('status-error', 'status-active');
+                document.getElementById('view-title').innerText = data.folderName || "Vault";
+                renderItems(data.items);
+            } catch (error) {
+                statusBtn.classList.replace('status-active', 'status-error');
+                grid.innerHTML = '<p style="color: var(--status-red); padding: 20px;">Erro de conexão.</p>';
+            }
+        }
+
+        function renderItems(items) {
+            const grid = document.getElementById('grid');
             grid.innerHTML = '';
 
-            folders.forEach(folder => {
-                const card = document.createElement('div');
-                card.className = 'project-card';
-                
-                const bgStyle = folder.coverImg 
-                    ? `background-image: url('${folder.coverImg}'); background-size: cover;` 
-                    : `background: ${getVibrantGradient(folder.name)};`;
+            if (!items || items.length === 0) {
+                grid.innerHTML = '<p style="color: var(--text-secondary); padding: 20px;">Pasta vazia.</p>';
+                return;
+            }
 
+            items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.onclick = () => item.type === 'folder' ? openFolder(item) : playTrack(item);
+                
                 card.innerHTML = `
-                    <div class="cover-wrapper" style="${bgStyle}">
-                        <div class="play-overlay">▶</div>
-                    </div>
-                    <div class="project-info">
-                        <span class="badge">${folder.trackCount} TRACKS</span>
-                        <h3>${folder.name}</h3>
-                        <p>${folder.lastUpdated}</p>
+                    <div class="cover" style="background: ${getSoftGradient(item.name)}"></div>
+                    <div class="info">
+                        <span class="badge">${item.info}</span>
+                        <h3>${item.name}</h3>
                     </div>
                 `;
                 grid.appendChild(card);
             });
         }
 
-        // Dados teste com nomes dos seus possíveis projetos
-        const myDriveFolders = [
-            { name: "Trap_Main_Vault", trackCount: 14, lastUpdated: "2h atrás", coverImg: null },
-            { name: "Demos_Prospection", trackCount: 6, lastUpdated: "Ontem", coverImg: null },
-            { name: "Drill_Sessions_2026", trackCount: 8, lastUpdated: "3 dias atrás", coverImg: null },
-            { name: "Mix_Masters_Finals", trackCount: 22, lastUpdated: "1 semana atrás", coverImg: null },
-            { name: "Synth_Loops_Pack", trackCount: 12, lastUpdated: "1 semana atrás", coverImg: null },
-            { name: "Vocal_Stems_Project", trackCount: 4, lastUpdated: "2 semanas atrás", coverImg: null },
-            { name: "Old_Sketches", trackCount: 45, lastUpdated: "1 mês atrás", coverImg: null },
-            { name: "Nômade_Sound_ID", trackCount: 2, lastUpdated: "Hoje", coverImg: null }
-        ];
+        function openFolder(folder) {
+            document.getElementById('path-name').innerText = folder.name;
+            loadFolder(folder.id);
+        }
 
-        renderVault(myDriveFolders);
+        function playTrack(track) {
+            document.getElementById('p-title').innerText = track.name;
+            document.getElementById('p-art').style.background = getSoftGradient(track.name);
+            
+            audio.src = track.url;
+            audio.play();
+            playBtn.innerText = "⏸";
+        }
+
+        function togglePlay() {
+            if (audio.paused) {
+                audio.play();
+                playBtn.innerText = "⏸";
+            } else {
+                audio.pause();
+                playBtn.innerText = "▶";
+            }
+        }
+
+        function goHome() {
+            document.getElementById('path-name').innerText = "Vault";
+            loadFolder();
+        }
+
+        // Atualização da barra de progresso
+        audio.ontimeupdate = () => {
+            const pct = (audio.currentTime / audio.duration) * 100;
+            progressFill.style.width = `${pct}%`;
+            document.getElementById('curr-time').innerText = formatTime(audio.currentTime);
+            if (!isNaN(audio.duration)) {
+                document.getElementById('total-time').innerText = formatTime(audio.duration);
+            }
+        };
+
+        function formatTime(sec) {
+            const m = Math.floor(sec / 60);
+            const s = Math.floor(sec % 60);
+            return `${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+
+        // Início
+        loadFolder();
     </script>
 </body>
 </html>
