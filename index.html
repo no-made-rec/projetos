@@ -50,6 +50,7 @@
             font-size: 10px;
             font-weight: 700;
             border: 1px solid transparent;
+            transition: all 0.3s ease;
         }
         .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--status-red); }
         .status-active { border-color: var(--status-green); color: var(--status-green); }
@@ -113,7 +114,7 @@
         <div class="logo">[ nômade <span>vault</span> ]</div>
         <div id="drive-status" class="drive-status status-error">
             <div class="status-dot"></div>
-            SYNC
+            GOOGLE DRIVE
         </div>
     </header>
 
@@ -134,9 +135,9 @@
         </div>
         <div class="p-controls">
             <div class="p-btns">
-                <span style="opacity:0.5">⏮</span>
+                <span style="opacity:0.3; cursor:default">⏮</span>
                 <span id="play-btn" class="btn-main" onclick="togglePlay()">▶</span>
-                <span style="opacity:0.5">⏭</span>
+                <span style="opacity:0.3; cursor:default">⏭</span>
             </div>
             <div class="progress-wrapper">
                 <span id="curr-time">0:00</span>
@@ -149,7 +150,8 @@
     <audio id="audio-player" style="display:none;"></audio>
 
     <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxMv9tdYFb2JM0I3uv1_VPpCcU10O0mIdHARDTsPd3SdCori1y4sIthbTfHUuJ5O7Ym/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz1vN5ZhIopgWRlQpL2Uxkl4IZlQMTLeHMX4nKmZhewW2in5LFkmFNMJ5tBZHjfOj-N/exec';
+        
         const audio = document.getElementById('audio-player');
         const playBtn = document.getElementById('play-btn');
         const progressFill = document.getElementById('progress-fill');
@@ -163,10 +165,13 @@
         async function loadFolder(folderId = '') {
             const grid = document.getElementById('grid');
             const statusBtn = document.getElementById('drive-status');
-            grid.innerHTML = '<p style="color: var(--text-secondary); padding: 20px;">Sincronizando...</p>';
+            grid.innerHTML = '<p style="color: var(--text-secondary); padding: 20px;">Sincronizando com Nômade Drive...</p>';
 
             try {
-                const response = await fetch(`${SCRIPT_URL}?folderId=${folderId}`);
+                const url = folderId ? `${SCRIPT_URL}?folderId=${folderId}` : SCRIPT_URL;
+                const response = await fetch(url, { method: 'GET', redirect: 'follow' });
+                
+                if (!response.ok) throw new Error();
                 const data = await response.json();
 
                 statusBtn.classList.replace('status-error', 'status-active');
@@ -174,7 +179,7 @@
                 renderItems(data.items);
             } catch (error) {
                 statusBtn.classList.replace('status-active', 'status-error');
-                grid.innerHTML = '<p style="color: var(--status-red); padding: 20px;">Erro de conexão.</p>';
+                grid.innerHTML = '<p style="color: var(--status-red); padding: 20px;">Erro de conexão. Verifique o console ou as permissões do script.</p>';
             }
         }
 
@@ -183,7 +188,7 @@
             grid.innerHTML = '';
 
             if (!items || items.length === 0) {
-                grid.innerHTML = '<p style="color: var(--text-secondary); padding: 20px;">Pasta vazia.</p>';
+                grid.innerHTML = '<p style="color: var(--text-secondary); padding: 20px;">Pasta vazia ou sem arquivos de áudio.</p>';
                 return;
             }
 
@@ -218,6 +223,7 @@
         }
 
         function togglePlay() {
+            if (!audio.src) return;
             if (audio.paused) {
                 audio.play();
                 playBtn.innerText = "⏸";
@@ -232,23 +238,21 @@
             loadFolder();
         }
 
-        // Atualização da barra de progresso
         audio.ontimeupdate = () => {
+            if (!audio.duration) return;
             const pct = (audio.currentTime / audio.duration) * 100;
             progressFill.style.width = `${pct}%`;
             document.getElementById('curr-time').innerText = formatTime(audio.currentTime);
-            if (!isNaN(audio.duration)) {
-                document.getElementById('total-time').innerText = formatTime(audio.duration);
-            }
+            document.getElementById('total-time').innerText = formatTime(audio.duration);
         };
 
         function formatTime(sec) {
+            if (isNaN(sec)) return "0:00";
             const m = Math.floor(sec / 60);
             const s = Math.floor(sec % 60);
             return `${m}:${s < 10 ? '0' : ''}${s}`;
         }
 
-        // Início
         loadFolder();
     </script>
 </body>
