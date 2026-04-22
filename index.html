@@ -9,13 +9,12 @@
 
         :root {
             --bg-main: #0a0a0a;
-            --bg-card: #141414;
             --text-primary: #ffffff;
             --text-secondary: #888888;
             --nomade-blue: #007AFF;
             --status-red: #FF3B30;
             --status-green: #34C759;
-            --glass-bg: rgba(25, 25, 25, 0.75);
+            --glass-bg: rgba(25, 25, 25, 0.85);
             --radius-main: 12px;
         }
 
@@ -50,16 +49,13 @@
             font-size: 10px;
             font-weight: 700;
             border: 1px solid transparent;
-            transition: all 0.3s ease;
         }
         .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--status-red); }
         .status-active { border-color: var(--status-green); color: var(--status-green); }
         .status-active .status-dot { background: var(--status-green); box-shadow: 0 0 8px var(--status-green); }
-        .status-error { border-color: var(--status-red); color: var(--status-red); }
 
         .nav-container { max-width: 1100px; margin: 0 auto 35px; }
         .breadcrumbs { font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; cursor: pointer; }
-        .breadcrumbs span { color: var(--nomade-blue); }
         .section-title { font-size: 36px; font-weight: 700; letter-spacing: -1.5px; }
 
         .grid {
@@ -77,7 +73,7 @@
             width: 100%; aspect-ratio: 1/1; border-radius: var(--radius-main);
             margin-bottom: 14px;
             border: 1px solid rgba(255,255,255,0.03);
-            transition: border 0.3s, box-shadow 0.3s;
+            transition: all 0.3s;
         }
         .card:hover .cover { border-color: rgba(0, 122, 255, 0.5); box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
 
@@ -88,11 +84,12 @@
             font-size: 9px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;
         }
 
+        /* PLAYER PILL */
         .player-pill {
             position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%);
             width: 90%; max-width: 680px; background: var(--glass-bg);
             backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255,255,255,0.08); border-radius: 100px;
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 100px;
             padding: 12px 20px; display: flex; align-items: center; gap: 18px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.5); z-index: 1000;
         }
@@ -105,14 +102,14 @@
         
         .progress-wrapper { display: flex; align-items: center; gap: 10px; font-size: 10px; color: var(--text-secondary); }
         .progress-bar { flex-grow: 1; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; position: relative; }
-        .progress-fill { position: absolute; height: 100%; background: var(--nomade-blue); border-radius: 2px; width: 0%; }
+        .progress-fill { position: absolute; height: 100%; background: var(--nomade-blue); border-radius: 2px; width: 0%; transition: width 0.1s linear; }
     </style>
 </head>
 <body>
 
     <header>
         <div class="logo">[ nômade <span>vault</span> ]</div>
-        <div id="drive-status" class="drive-status status-error">
+        <div id="drive-status" class="drive-status">
             <div class="status-dot"></div>
             GOOGLE DRIVE
         </div>
@@ -120,7 +117,7 @@
 
     <div class="nav-container">
         <div class="breadcrumbs" onclick="goHome()">Início > <span id="path-name">Vault</span></div>
-        <h1 id="view-title" class="section-title">Meus Projetos</h1>
+        <h1 id="view-title" class="section-title">Nômade Vault</h1>
     </div>
 
     <div id="grid" class="grid"></div>
@@ -147,7 +144,7 @@
         </div>
     </div>
 
-    <audio id="audio-player" style="display:none;"></audio>
+    <audio id="audio-player" crossorigin="anonymous"></audio>
 
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz1vN5ZhIopgWRlQpL2Uxkl4IZlQMTLeHMX4nKmZhewW2in5LFkmFNMJ5tBZHjfOj-N/exec';
@@ -174,12 +171,12 @@
                 if (!response.ok) throw new Error();
                 const data = await response.json();
 
-                statusBtn.classList.replace('status-error', 'status-active');
+                statusBtn.classList.add('status-active');
                 document.getElementById('view-title').innerText = data.folderName || "Vault";
                 renderItems(data.items);
             } catch (error) {
-                statusBtn.classList.replace('status-active', 'status-error');
-                grid.innerHTML = '<p style="color: var(--status-red); padding: 20px;">Erro de conexão. Verifique o console ou as permissões do script.</p>';
+                statusBtn.classList.remove('status-active');
+                grid.innerHTML = '<p style="color: var(--status-red); padding: 20px;">Erro de conexão.</p>';
             }
         }
 
@@ -188,7 +185,7 @@
             grid.innerHTML = '';
 
             if (!items || items.length === 0) {
-                grid.innerHTML = '<p style="color: var(--text-secondary); padding: 20px;">Pasta vazia ou sem arquivos de áudio.</p>';
+                grid.innerHTML = '<p style="color: var(--text-secondary); padding: 20px;">Pasta vazia ou sem áudios.</p>';
                 return;
             }
 
@@ -217,9 +214,15 @@
             document.getElementById('p-title').innerText = track.name;
             document.getElementById('p-art').style.background = getSoftGradient(track.name);
             
-            audio.src = track.url;
-            audio.play();
-            playBtn.innerText = "⏸";
+            // Link otimizado para o player web do Google Drive
+            audio.src = `https://docs.google.com/uc?export=download&id=${track.id}`;
+            audio.load();
+            
+            audio.play().then(() => {
+                playBtn.innerText = "⏸";
+            }).catch(e => {
+                console.warn("Autoplay bloqueado ou erro no link.");
+            });
         }
 
         function togglePlay() {
