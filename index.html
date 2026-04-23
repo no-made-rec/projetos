@@ -7,240 +7,249 @@
     <script src="https://unpkg.com/wavesurfer.js@7"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;700;900&display=swap');
-        :root { --bg: #050505; --blue: #007AFF; --border: rgba(255,255,255,0.08); --dim: #555; }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; padding: 40px; }
-        
-        /* HEADER */
-        .header { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto 60px; }
-        .logo { font-weight: 900; font-size: 22px; text-decoration:none; color:#fff; letter-spacing:-1px; }
+
+        :root {
+            --bg: #050505;
+            --blue: #007AFF;
+            --green: #34C759;
+            --red: #FF3B30;
+            --border: rgba(255, 255, 255, 0.08);
+            --dim: #444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+        body { background-color: var(--bg); color: #fff; font-family: 'Inter', sans-serif; padding: 20px 20px 180px 20px; -webkit-font-smoothing: antialiased; }
+
+        header { max-width: 1100px; margin: 0 auto; padding-top: 20px; }
+        .header-content { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; }
+        .logo { font-weight: 700; font-size: 24px; letter-spacing: -1.2px; text-decoration: none; color: #fff; }
         .logo span { color: var(--blue); font-weight: 400; }
-        .api-status { font-family: 'JetBrains Mono'; font-size: 10px; color: #34C759; border: 1px solid var(--border); padding: 6px 15px; border-radius: 100px; }
-        .syncing { color: #FF3B30; border-color: #FF3B30; }
+        .api-status { font-family: 'JetBrains Mono'; font-size: 10px; color: var(--green); border: 1px solid var(--border); padding: 6px 14px; border-radius: 100px; background: #000; transition: 0.3s; }
+        .status-syncing { color: var(--red) !important; border-color: var(--red) !important; box-shadow: 0 0 10px rgba(255,59,48,0.2); }
+        .header-line { width: 100vw; height: 1px; background: var(--border); margin-left: calc(-50vw + 50%); margin-bottom: 50px; }
 
-        /* VIEW MODES */
-        .container { max-width: 1200px; margin: 0 auto; }
-        .section-header { margin-bottom: 40px; }
-        .section-header h1 { font-size: 48px; font-weight: 900; letter-spacing: -2px; }
+        .nav-container { max-width: 1100px; margin: 0 auto 40px; }
+        .breadcrumbs { font-family: 'JetBrains Mono'; font-size: 10px; color: var(--dim); text-transform: uppercase; cursor: pointer; }
+        .section-title { font-size: 42px; font-weight: 900; letter-spacing: -2px; }
+
+        /* GRID & COVERS */
+        .grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 30px; }
+        .folder-card { cursor: pointer; position: relative; transition: transform 0.4s cubic-bezier(0.2, 1, 0.2, 1); }
+        .folder-box { width: 100%; aspect-ratio: 1; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 12px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .ghost-name { position: absolute; font-family: 'Inter'; font-weight: 900; font-size: 14px; color: rgba(255,255,255,0.05); text-transform: uppercase; transition: 0.4s; pointer-events: none; text-align: center; }
+        .folder-card:hover { transform: translateY(-8px); }
+        .folder-card:hover .folder-box { border-color: var(--blue); }
+        .folder-card:hover .ghost-name { color: rgba(255,255,255,0.2); transform: scale(1.1); }
+        .folder-meta { display: flex; justify-content: space-between; font-family: 'JetBrains Mono'; font-size: 9px; color: var(--dim); margin-top: 5px; }
+
+        .project-view { display: grid; grid-template-columns: 350px 1fr; gap: 60px; max-width: 1100px; margin: 0 auto; }
+        .project-cover { width: 350px; height: 350px; border-radius: 12px; border: 1px solid var(--border); position: sticky; top: 40px; }
+        .track-item { padding: 18px 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .track-name { font-family: 'JetBrains Mono'; font-size: 13px; cursor: pointer; flex: 1; }
+        .btn-notes-trigger { font-family: 'JetBrains Mono'; font-size: 9px; padding: 4px 10px; border: 1px solid var(--dim); border-radius: 4px; color: var(--dim); cursor: pointer; }
+
+        /* MODAL */
+        #notes-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; z-index: 4000; }
+        .modal-content { background: #0d0d0d; width: 90%; max-width: 550px; height: 550px; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; }
+        .modal-header { display: flex; background: #000; border-bottom: 1px solid var(--border); position: relative; }
+        .tab { flex: 1; padding: 15px; text-align: center; font-family: 'JetBrains Mono'; font-size: 10px; color: var(--dim); cursor: pointer; }
+        .tab.active { color: var(--blue); font-weight: 700; background: #0d0d0d; }
         
-        /* MODO GRADE (PASTAS) */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 30px; }
-        .folder-card { cursor: pointer; transition: 0.3s; }
-        .folder-card:hover { transform: translateY(-5px); }
-        .folder-box { width: 100%; aspect-ratio: 1.5; background: #111; border: 1px solid var(--border); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 40px; margin-bottom: 15px; }
-        .folder-card h3 { font-size: 14px; margin-bottom: 5px; }
-        .folder-card span { font-family: 'JetBrains Mono'; font-size: 10px; color: var(--dim); }
+        .tab-body { flex: 1; padding: 25px; overflow-y: auto; display: none; }
+        .tab-body.active { display: block; }
+        
+        .obs-area { width: 100%; height: 120px; background: #000; border: 1px solid var(--border); color: #888; font-family: 'JetBrains Mono'; font-size: 11px; padding: 10px; resize: none; margin-bottom: 15px; border-radius: 8px; }
+        #checklist-container { border-top: 1px solid var(--border); padding-top: 15px; }
+        .check-item { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-family: 'JetBrains Mono'; font-size: 12px; color: #aaa; }
+        .check-item input { accent-color: var(--blue); cursor: pointer; }
 
-        /* MODO TRACKLIST (DENTRO DO PROJETO) */
-        .project-view { display: grid; grid-template-columns: 350px 1fr; gap: 60px; opacity: 0; animation: fadeIn 0.5s forwards; }
-        .project-cover { width: 350px; height: 350px; border-radius: 12px; position: sticky; top: 40px; }
-        .tracklist { list-style: none; }
-        .track-item { padding: 15px 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s; }
-        .track-item:hover { color: var(--blue); }
-        .track-item.active { color: var(--blue); font-weight: 700; }
-        .track-name { font-family: 'JetBrains Mono'; font-size: 13px; }
-
-        /* RECALLS */
-        .recall-section { margin-top: 40px; border-top: 1px solid var(--border); padding-top: 20px; }
-        .recall-input-wrap { display: flex; gap: 10px; margin-bottom: 20px; }
-        input[type="text"] { background: #111; border: 1px solid var(--border); padding: 10px; color: #fff; border-radius: 4px; flex: 1; font-family: 'JetBrains Mono'; }
-        .recall-list { font-family: 'JetBrains Mono'; font-size: 12px; color: var(--dim); }
-        .recall-item { margin-bottom: 8px; cursor: pointer; }
-        .recall-item b { color: var(--blue); }
-
-        /* PLAYER PILL */
-        .player-pill { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(200px); width: 850px; background: rgba(10,10,10,0.95); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 100px; padding: 15px 40px; display: grid; grid-template-columns: 180px 1fr 200px; gap: 30px; align-items: center; transition: 0.5s cubic-bezier(0.17, 0.67, 0.83, 0.67); }
-        .player-visible { transform: translateX(-50%) translateY(0); }
-        .p-info { overflow: hidden; }
-        .p-info div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: 'JetBrains Mono'; font-size: 11px; }
+        /* PLAYER */
+        .player-pill {
+            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(150%);
+            width: 95%; max-width: 850px; background: rgba(10, 10, 10, 0.98);
+            backdrop-filter: blur(25px); border: 1px solid var(--border);
+            border-radius: 100px; padding: 15px 40px; display: grid; 
+            grid-template-columns: 180px 1fr 220px; align-items: center; gap: 35px;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.9); z-index: 5000; 
+            transition: all 0.6s cubic-bezier(0.2, 1, 0.2, 1); opacity: 0; pointer-events: none;
+        }
+        .player-visible { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: auto; }
+        .p-art { width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--border); background: #111; }
+        .p-txt .name { font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'JetBrains Mono'; transition: 0.2s; }
+        .p-txt .name:hover { color: var(--blue); text-decoration: underline; }
+        #waveform { width: 100%; height: 35px; }
+        .time-wrap { display: flex; justify-content: space-between; font-family: 'JetBrains Mono'; font-size: 9px; color: var(--blue); margin-top: 6px; }
         .p-controls { display: flex; align-items: center; gap: 15px; justify-content: flex-end; }
-        .btn { cursor: pointer; font-size: 18px; transition: 0.2s; }
-        .btn:hover { color: var(--blue); scale: 1.1; }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .btn-play { width: 44px; height: 44px; background: rgba(0, 122, 255, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--blue); cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <a href="https://tr.ee/nomaderecords" target="_blank" class="logo">[ nômade <span>vault</span> ]</a>
-        <div id="status" class="api-status">• API SYNC</div>
+    <header>
+        <div class="header-content">
+            <a href="https://tr.ee/nomaderecords" target="_blank" class="logo">[ nômade <span>vault</span> ]</a>
+            <div id="status" class="api-status">• API SYNC</div>
+        </div>
+        <div class="header-line"></div>
+    </header>
+
+    <div class="nav-container">
+        <div class="breadcrumbs" onclick="goHome()">INÍCIO > <span id="path-name">VAULT</span></div>
+        <h1 class="section-title" id="title">Projetos</h1>
     </div>
 
-    <div class="container">
-        <div class="section-header">
-            <div id="breadcrumb" style="font-family:'JetBrains Mono'; font-size:10px; color:var(--dim); cursor:pointer; margin-bottom:10px;" onclick="load()">ROOT > VAULT</div>
-            <h1 id="title">Projetos</h1>
+    <div id="content" class="container"></div>
+
+    <div id="notes-modal" onclick="closeNotes(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div class="tab active" onclick="switchTab('recalls')">RECALLS</div>
+                <div class="tab" onclick="switchTab('obs')">NOTAS</div>
+                <div style="position:absolute; right:15px; top:12px; cursor:pointer; color:var(--dim)" onclick="document.getElementById('notes-modal').style.display='none'">×</div>
+            </div>
+            <div id="tab-recalls" class="tab-body active">
+                <input type="text" id="recall-msg" class="recall-input" placeholder="ADICIONAR TIMESTAMP (ENTER)" onkeydown="if(event.key==='Enter') addRecall()">
+                <div id="recall-list" style="font-family:'JetBrains Mono'; font-size:11px; color:var(--dim)"></div>
+            </div>
+            <div id="tab-obs" class="tab-body">
+                <textarea id="obs-text" class="obs-area" placeholder="Digite aqui... [] Cria checkbox" oninput="processChecklist()"></textarea>
+                <div id="checklist-container"></div>
+            </div>
         </div>
-        <div id="content"></div>
     </div>
 
     <div id="player" class="player-pill">
-        <div class="p-info">
-            <div id="p-name" style="font-weight:700">IDLE</div>
-            <div style="color:var(--dim); font-size:9px">NÔMADE RECORD'S</div>
+        <div class="p-info" style="display:flex; align-items:center; gap:12px;">
+            <div id="p-art" class="p-art"></div>
+            <div class="p-txt">
+                <div id="p-title" class="name" onclick="goToParentFolder()">IDLE_SYSTEM</div>
+                <div style="color:var(--dim); font-size:9px; font-family:'JetBrains Mono'">NÔMADE_RECORDS</div>
+            </div>
         </div>
         <div class="p-mid">
             <div id="waveform"></div>
-            <div style="display:flex; justify-content:space-between; font-family:'JetBrains Mono'; font-size:9px; color:var(--blue); margin-top:5px;">
+            <div class="time-wrap">
                 <span id="c-time">00:00</span>
-                <span id="t-time">00:00</span>
+                <span id="total-time">00:00</span>
             </div>
         </div>
         <div class="p-controls">
-            <span class="btn" id="prev-btn">⏮</span>
-            <span class="btn" id="play-btn" onclick="wavesurfer.playPause()">▶</span>
-            <span class="btn" id="next-btn">⏭</span>
-            <input type="range" min="0" max="1" step="0.1" value="0.8" oninput="wavesurfer.setVolume(this.value)" style="width:50px;">
+            <span style="cursor:pointer" onclick="openNotesCurrent()">💬</span>
+            <span style="cursor:pointer" id="prev-btn">⏮</span>
+            <div class="btn-play" onclick="togglePlay()" id="play-btn">▶</div>
+            <span style="cursor:pointer" id="next-btn">⏭</span>
+            <input type="range" min="0" max="1" step="0.1" value="0.8" oninput="wavesurfer.setVolume(this.value)" style="width:35px; accent-color:var(--blue);">
         </div>
     </div>
 
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz1vN5ZhIopgWRlQpL2Uxkl4IZlQMTLeHMX4nKmZhewW2in5LFkmFNMJ5tBZHjfOj-N/exec';
-        let currentTracks = [];
-        let currentIndex = -1;
+        let currentTracks = [], currentIndex = -1, currentParentId = null, activeTrackId = null;
 
-        const wavesurfer = WaveSurfer.create({
-            container: '#waveform',
-            waveColor: '#222',
-            progressColor: '#007AFF',
-            height: 30,
-            barWidth: 2,
-            normalize: true
-        });
+        const wavesurfer = WaveSurfer.create({ container: '#waveform', waveColor: '#1a1a1a', progressColor: '#007AFF', height: 35, barWidth: 2, normalize: true });
 
-        async function load(id = '') {
-            const content = document.getElementById('content');
-            content.innerHTML = '<div style="font-family:JetBrains Mono; color:var(--dim)">LOADING_VAULT...</div>';
-            
-            const res = await fetch(id ? `${SCRIPT_URL}?folderId=${id}` : SCRIPT_URL);
-            const data = await res.json();
-            
-            document.getElementById('title').innerText = data.name === 'Root' ? 'Projetos' : data.name;
-            render(data.items);
+        function getGrad(name) {
+            const h = name.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) % 360;
+            return `linear-gradient(135deg, hsl(${h}, 80%, 45%), #050505)`;
         }
 
-        function render(items) {
-            const content = document.getElementById('content');
-            content.innerHTML = '';
-            
-            const hasFiles = items.some(i => i.type === 'file');
-            
-            if (hasFiles) {
-                // MODO PROJETO (CAPA + TRACKLIST)
-                currentTracks = items.filter(i => i.type === 'file');
-                const projectDiv = document.createElement('div');
-                projectDiv.className = 'project-view';
-                
-                const grad = `linear-gradient(135deg, hsl(${Math.random()*360},70%,50%), #000)`;
-                
-                projectDiv.innerHTML = `
-                    <div>
-                        <div class="project-cover" style="background:${grad}"></div>
-                        <div class="recall-section">
-                            <div class="recall-input-wrap">
-                                <input type="text" id="recall-msg" placeholder="Adicionar Recall...">
-                                <button onclick="addRecall()" style="background:var(--blue); border:none; padding:0 15px; border-radius:4px; color:#fff; cursor:pointer">+</button>
-                            </div>
-                            <div id="recall-list" class="recall-list"></div>
-                        </div>
-                    </div>
-                    <ul class="tracklist">
-                        ${currentTracks.map((t, i) => `
-                            <li class="track-item" onclick="play(${i})">
-                                <span class="track-name">${t.name}</span>
-                                <span style="font-family:JetBrains Mono; font-size:10px; color:var(--dim)">${t.size}</span>
-                            </li>
-                        `).join('')}
-                    </ul>
-                `;
-                content.appendChild(projectDiv);
+        async function load(fId = '') {
+            const resp = await fetch(fId ? `${SCRIPT_URL}?folderId=${fId}` : SCRIPT_URL);
+            const data = await resp.json();
+            document.getElementById('title').innerText = fId ? data.name : 'Projetos';
+            render(data.items, fId);
+        }
+
+        function render(items, fId) {
+            const content = document.getElementById('content'); content.innerHTML = '';
+            const files = items.filter(i => i.type === 'file');
+            if (files.length > 0) {
+                currentTracks = files;
+                content.innerHTML = `<div class="project-view">
+                    <div class="project-cover" style="background:${getGrad(document.getElementById('title').innerText)}"></div>
+                    <ul style="list-style:none">${files.map((t, i) => `
+                        <li class="track-item"><span class="track-name" onclick="play(${i}, '${fId}')">${t.name}</span>
+                        <span class="btn-notes-trigger" onclick="openNotes('${t.id}')">NOTAS</span></li>`).join('')}</ul></div>`;
             } else {
-                // MODO GRADE (PASTAS)
-                const grid = document.createElement('div');
-                grid.className = 'grid';
+                const grid = document.createElement('div'); grid.className = 'grid';
                 items.forEach(item => {
-                    const card = document.createElement('div');
-                    card.className = 'folder-card';
-                    card.onclick = () => load(item.id);
-                    card.innerHTML = `
-                        <div class="folder-box">📁</div>
-                        <h3>${item.name}</h3>
-                        <span>${item.meta}</span>
-                    `;
+                    const card = document.createElement('div'); card.className = 'folder-card';
+                    card.onclick = () => { document.getElementById('path-name').innerText = item.name.toUpperCase(); load(item.id); };
+                    card.innerHTML = `<div class="folder-box" style="background:${getGrad(item.name)}"><div class="ghost-name">${item.name}</div></div>
+                        <h3>${item.name}</h3><div class="folder-meta"><span>${item.meta}</span><span>${item.updated}</span></div>`;
                     grid.appendChild(card);
                 });
                 content.appendChild(grid);
             }
         }
 
-        async function play(index) {
-            const track = currentTracks[index];
-            currentIndex = index;
+        async function play(index, pId) {
+            const track = currentTracks[index]; currentIndex = index; currentParentId = pId;
             const status = document.getElementById('status');
-            
-            status.innerText = '• SYNCING...';
-            status.classList.add('syncing');
+            status.innerText = '• SYNCING...'; status.classList.add('status-syncing');
             
             const res = await fetch(`${SCRIPT_URL}?fileId=${track.id}`);
             const base64 = await res.text();
-            
             wavesurfer.load(`data:audio/mpeg;base64,${base64}`);
             wavesurfer.on('ready', () => {
                 document.getElementById('player').classList.add('player-visible');
-                document.getElementById('p-name').innerText = track.name;
-                wavesurfer.play();
-                status.innerText = '• API SYNC';
-                status.classList.remove('syncing');
-                updateRecalls();
+                document.getElementById('p-title').innerText = track.name.toUpperCase();
+                document.getElementById('p-art').style.background = getGrad(track.name);
+                wavesurfer.play(); document.getElementById('play-btn').innerText = '⏸';
+                status.innerText = '• API SYNC'; status.classList.remove('status-syncing');
             });
         }
 
-        // CONTROLES DE FLUXO (DOUBLE CLICK LOGIC)
-        let lastClick = 0;
-        document.getElementById('next-btn').onclick = () => {
-            const now = Date.now();
-            if (now - lastClick < 300) { if(currentIndex < currentTracks.length-1) play(currentIndex+1); }
-            else { wavesurfer.skip(5); }
-            lastClick = now;
-        };
-        document.getElementById('prev-btn').onclick = () => {
-            const now = Date.now();
-            if (now - lastClick < 300) { if(currentIndex > 0) play(currentIndex-1); }
-            else { wavesurfer.skip(-5); }
-            lastClick = now;
-        };
+        function goToParentFolder() { if (currentParentId) load(currentParentId); }
 
-        // SISTEMA DE RECALL
+        function togglePlay() { wavesurfer.playPause(); document.getElementById('play-btn').innerText = wavesurfer.isPlaying() ? '⏸' : '▶'; }
+        function openNotes(trackId) { activeTrackId = trackId; document.getElementById('notes-modal').style.display = 'flex'; updateRecallList(); document.getElementById('obs-text').value = localStorage.getItem('obs_' + trackId) || ''; processChecklist(); }
+        function openNotesCurrent() { if (currentIndex !== -1) openNotes(currentTracks[currentIndex].id); }
+        function closeNotes(e) { if(e.target.id === 'notes-modal') e.target.style.display = 'none'; }
+        function switchTab(tab) {
+            document.querySelectorAll('.tab, .tab-body').forEach(el => el.classList.remove('active'));
+            document.querySelector(`.tab[onclick*="${tab}"]`).classList.add('active');
+            document.getElementById(`tab-${tab}`).classList.add('active');
+        }
+
+        function processChecklist() {
+            const text = document.getElementById('obs-text').value;
+            localStorage.setItem('obs_' + activeTrackId, text);
+            const container = document.getElementById('checklist-container');
+            container.innerHTML = '';
+            text.split('\n').forEach((line, idx) => {
+                if (line.trim().startsWith('[]')) {
+                    const cleanText = line.replace('[]', '').trim();
+                    const key = `check_${activeTrackId}_${cleanText}`;
+                    const checked = localStorage.getItem(key) === 'true';
+                    const div = document.createElement('div');
+                    div.className = 'check-item';
+                    div.innerHTML = `<input type="checkbox" ${checked ? 'checked' : ''} onchange="localStorage.setItem('${key}', this.checked)"> <span>${cleanText}</span>`;
+                    container.appendChild(div);
+                }
+            });
+        }
+
         function addRecall() {
             const msg = document.getElementById('recall-msg').value;
-            if (!msg || currentIndex === -1) return;
-            const time = wavesurfer.getCurrentTime();
-            const trackId = currentTracks[currentIndex].id;
-            
-            const recalls = JSON.parse(localStorage.getItem('recalls') || '{}');
-            if(!recalls[trackId]) recalls[trackId] = [];
-            recalls[trackId].push({ time, msg });
-            localStorage.setItem('recalls', JSON.stringify(recalls));
-            
-            document.getElementById('recall-msg').value = '';
-            updateRecalls();
+            if (!msg) return;
+            const recalls = JSON.parse(localStorage.getItem('recalls_' + activeTrackId) || '[]');
+            recalls.push({ time: wavesurfer.getCurrentTime(), msg });
+            localStorage.setItem('recalls_' + activeTrackId, JSON.stringify(recalls));
+            document.getElementById('recall-msg').value = ''; updateRecallList();
         }
 
-        function updateRecalls() {
-            const trackId = currentTracks[currentIndex].id;
-            const recalls = JSON.parse(localStorage.getItem('recalls') || '{}')[trackId] || [];
-            const list = document.getElementById('recall-list');
-            list.innerHTML = recalls.map(r => `
-                <div class="recall-item" onclick="wavesurfer.setTime(${r.time})">
-                    <b>${format(r.time)}</b>: ${r.msg}
-                </div>
-            `).join('');
+        function updateRecallList() {
+            const recalls = JSON.parse(localStorage.getItem('recalls_' + activeTrackId) || '[]');
+            document.getElementById('recall-list').innerHTML = recalls.map(r => `
+                <div style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.03); cursor:pointer" onclick="wavesurfer.setTime(${r.time})">
+                <b style="color:var(--blue)">${format(r.time)}</b>: ${r.msg}</div>`).join('');
         }
 
+        function goHome() { document.getElementById('path-name').innerText = "VAULT"; load(); }
+        function format(s) { const m=Math.floor(s/60), sec=Math.floor(s%60); return `${m}:${sec < 10 ? '0' : ''}${sec}`; }
         wavesurfer.on('audioprocess', () => document.getElementById('c-time').innerText = format(wavesurfer.getCurrentTime()));
-        wavesurfer.on('ready', () => document.getElementById('t-time').innerText = format(wavesurfer.getDuration()));
-        function format(s) { const m=Math.floor(s/60); const sec=Math.floor(s%60); return `${m}:${sec<10?'0':''}${sec}`; }
+        wavesurfer.on('ready', () => document.getElementById('total-time').innerText = format(wavesurfer.getDuration()));
 
         load();
     </script>
