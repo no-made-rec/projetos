@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[nômade vault]</title>
+    <title>[nômade] vault</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
@@ -12,118 +12,78 @@
             --text-primary: #ffffff;
             --text-secondary: #888888;
             --nomade-blue: #007AFF;
-            --status-green: #34C759;
-            --glass-bg: rgba(18, 18, 18, 0.95);
-            --radius-main: 14px;
-            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-subtle: rgba(255, 255, 255, 0.1);
+            --glass-bg: rgba(15, 15, 15, 0.98);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body {
             background-color: var(--bg-main);
             color: var(--text-primary);
             font-family: 'Inter', sans-serif;
             padding: 20px 20px 160px 20px;
-            -webkit-font-smoothing: antialiased;
         }
 
         /* HEADER */
-        header {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding-top: 20px;
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
+        header { max-width: 1100px; margin: 0 auto; padding-top: 20px; }
+        .header-content { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; }
         .logo { font-weight: 700; font-size: 24px; letter-spacing: -1px; }
         .logo span { color: var(--nomade-blue); }
-
-        .header-line {
-            width: 100%;
-            height: 1px;
-            background: var(--border-subtle);
-            margin-bottom: 40px;
-        }
-
-        .drive-status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 14px;
-            background: #1a1a1a;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: 700;
-            color: var(--text-secondary);
-        }
-        .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-secondary); }
-        .status-active { border-color: var(--status-green); color: var(--status-green); border: 1px solid; }
-        .status-active .status-dot { background: var(--status-green); box-shadow: 0 0 8px var(--status-green); }
-
-        /* NAVEGAÇÃO */
-        .nav-container { max-width: 1100px; margin: 0 auto 35px; }
-        .breadcrumbs { font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; cursor: pointer; }
-        .section-title { font-size: 38px; font-weight: 700; letter-spacing: -1.5px; }
+        .header-line { width: 100%; height: 1px; background: var(--border-subtle); margin-bottom: 40px; }
 
         /* GRID */
-        .grid {
-            max-width: 1100px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 32px;
-        }
-
+        .nav-container { max-width: 1100px; margin: 0 auto 35px; }
+        .section-title { font-size: 38px; font-weight: 700; letter-spacing: -1.5px; margin-top: 10px; }
+        .grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 30px; }
+        
         .card { cursor: pointer; transition: transform 0.3s ease; }
-        .card:hover { transform: translateY(-6px); }
+        .card:hover { transform: translateY(-5px); }
+        .cover { width: 100%; aspect-ratio: 1/1; border-radius: 12px; border: 1px solid var(--border-subtle); margin-bottom: 12px; }
+        .info h3 { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        .cover {
-            width: 100%; aspect-ratio: 1/1; border-radius: var(--radius-main);
-            margin-bottom: 14px;
-            border: 1px solid var(--border-subtle);
-            transition: all 0.3s;
-        }
-        .card:hover .cover { border-color: var(--nomade-blue); box-shadow: 0 12px 30px rgba(0,0,0,0.5); }
-
-        .info h3 { font-size: 15px; font-weight: 500; margin-bottom: 5px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .badge {
-            display: inline-block; padding: 2px 8px; border-radius: 5px;
-            background: rgba(0, 122, 255, 0.12); color: var(--nomade-blue);
-            font-size: 10px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;
-        }
-
-        /* PLAYER REPAGINADO (850px) */
+        /* PLAYER SIMÉTRICO (850px) */
         .player-pill {
             position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
-            width: 95%; max-width: 850px; 
+            width: 95%; max-width: 850px;
             background: var(--glass-bg);
-            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-            border: 1px solid var(--border-subtle); border-radius: 100px;
-            padding: 16px 28px; display: flex; align-items: center; gap: 24px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.6); z-index: 1000;
+            border: 1px solid var(--border-subtle);
+            border-radius: 100px;
+            padding: 12px 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr; /* 3 colunas iguais */
+            align-items: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+            z-index: 1000;
         }
 
-        .p-info { display: flex; align-items: center; gap: 14px; width: 220px; overflow: hidden; }
-        .p-art { width: 48px; height: 48px; border-radius: 50%; background: var(--nomade-blue); flex-shrink: 0; transition: transform 0.4s; }
-        .playing .p-art { animation: rotate 8s linear infinite; }
+        /* Lado Esquerdo: Info */
+        .p-info { display: flex; align-items: center; gap: 12px; overflow: hidden; }
+        .p-art { width: 44px; height: 44px; border-radius: 50%; background: #222; flex-shrink: 0; }
+        .p-txt { overflow: hidden; }
+        .p-txt div:first-child { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .p-txt div:last-child { font-size: 10px; color: var(--text-secondary); }
 
-        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        /* Centro: Botões */
+        .p-controls { display: flex; justify-content: center; align-items: center; gap: 20px; }
+        .btn-side { font-size: 16px; color: var(--text-secondary); cursor: pointer; transition: 0.2s; }
+        .btn-side:hover { color: #fff; }
+        .btn-main { 
+            width: 48px; height: 48px; background: rgba(0, 122, 255, 0.1); 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: var(--nomade-blue); font-size: 24px; cursor: pointer; transition: 0.2s;
+        }
+        .btn-main:hover { transform: scale(1.05); background: rgba(0, 122, 255, 0.2); }
 
-        .p-controls { flex-grow: 1; display: flex; flex-direction: column; gap: 8px; }
-        .p-btns { display: flex; justify-content: center; gap: 30px; font-size: 20px; color: #fff; align-items: center; }
-        .btn-main { color: var(--nomade-blue); font-size: 32px; cursor: pointer; transition: transform 0.2s; }
-        .btn-main:hover { transform: scale(1.1); }
-        
-        .progress-wrapper { display: flex; align-items: center; gap: 12px; font-size: 11px; color: var(--text-secondary); }
-        .progress-bar { flex-grow: 1; height: 4px; background: rgba(255,255,255,0.08); border-radius: 10px; position: relative; cursor: pointer; }
-        .progress-fill { position: absolute; height: 100%; background: var(--nomade-blue); border-radius: 10px; width: 0%; }
+        /* Lado Direito: Progresso */
+        .p-progress { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+        .bar-container { width: 100%; max-width: 200px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; position: relative; cursor: pointer; }
+        .bar-fill { position: absolute; height: 100%; background: var(--nomade-blue); border-radius: 2px; width: 0%; }
+        .time-txt { font-size: 10px; color: var(--text-secondary); font-family: monospace; }
+
+        @media (max-width: 768px) {
+            .player-pill { grid-template-columns: 1fr 1fr; padding: 10px 20px; }
+            .p-progress { display: none; }
+        }
     </style>
 </head>
 <body>
@@ -131,159 +91,107 @@
     <header>
         <div class="header-content">
             <div class="logo">[ nômade <span>vault</span> ]</div>
-            <div id="drive-status" class="drive-status">
-                <div class="status-dot"></div>
-                GOOGLE DRIVE API
-            </div>
         </div>
         <div class="header-line"></div>
     </header>
 
     <div class="nav-container">
-        <div class="breadcrumbs" onclick="goHome()">Início > <span id="path-name">Vault</span></div>
-        <h1 id="view-title" class="section-title">Carregando...</h1>
+        <h1 id="view-title" class="section-title">Nômade Vault</h1>
     </div>
 
     <div id="grid" class="grid"></div>
 
-    <div id="player-container" class="player-pill">
+    <div class="player-pill">
         <div class="p-info">
             <div id="p-art" class="p-art"></div>
-            <div style="overflow: hidden;">
-                <div id="p-title" style="font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Nenhuma faixa</div>
-                <div style="font-size: 11px; color: var(--text-secondary);">Nômade Record's</div>
+            <div class="p-txt">
+                <div id="p-title">Nenhuma faixa</div>
+                <div>Nômade Record's</div>
             </div>
         </div>
         
         <div class="p-controls">
-            <div class="p-btns">
-                <span style="opacity:0.3; cursor:default; font-size: 16px;">⏮</span>
-                <span id="play-btn" class="btn-main" onclick="togglePlay()">▶</span>
-                <span style="opacity:0.3; cursor:default; font-size: 16px;">⏭</span>
-            </div>
-            <div class="progress-wrapper">
-                <span id="curr-time">0:00</span>
-                <div class="progress-bar" onclick="seek(event)"><div id="progress-fill" class="progress-fill"></div></div>
-                <span id="total-time">0:00</span>
-            </div>
+            <span class="btn-side">⏮</span>
+            <div id="play-btn" class="btn-main" onclick="togglePlay()">▶</div>
+            <span class="btn-side">⏭</span>
+        </div>
+
+        <div class="p-progress">
+            <div class="bar-container" onclick="seek(event)"><div id="bar-fill" class="bar-fill"></div></div>
+            <div class="time-txt"><span id="curr-time">0:00</span> / <span id="total-time">0:00</span></div>
         </div>
     </div>
 
-    <audio id="audio-player" crossorigin="anonymous" style="display:none;"></audio>
+    <audio id="audio-player" crossorigin="anonymous"></audio>
 
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz1vN5ZhIopgWRlQpL2Uxkl4IZlQMTLeHMX4nKmZhewW2in5LFkmFNMJ5tBZHjfOj-N/exec';
-        
         const audio = document.getElementById('audio-player');
         const playBtn = document.getElementById('play-btn');
-        const progressFill = document.getElementById('progress-fill');
-        const playerCont = document.getElementById('player-container');
+        const barFill = document.getElementById('bar-fill');
 
-        function getSoftGradient(name) {
+        function getGradient(name) {
             const hash = name.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
-            const baseHue = hash % 360;
-            return `linear-gradient(135deg, hsl(${baseHue}, 70%, 50%), hsl(${(baseHue + 40) % 360}, 60%, 40%))`;
+            return `linear-gradient(135deg, hsl(${hash % 360}, 70%, 50%), hsl(${(hash + 40) % 360}, 60%, 40%))`;
         }
 
         async function loadFolder(folderId = '') {
             const grid = document.getElementById('grid');
-            const statusBtn = document.getElementById('drive-status');
-            grid.innerHTML = '<p style="color: var(--text-secondary); padding: 20px;">Sincronizando...</p>';
-
+            grid.innerHTML = '<p style="color: #444; padding: 20px;">Carregando...</p>';
             try {
                 const url = folderId ? `${SCRIPT_URL}?folderId=${folderId}` : SCRIPT_URL;
                 const response = await fetch(url, { method: 'GET', redirect: 'follow' });
                 const data = await response.json();
-
-                statusBtn.classList.add('status-active');
                 document.getElementById('view-title').innerText = data.folderName || "Vault";
-                renderItems(data.items);
-            } catch (error) {
-                statusBtn.classList.remove('status-active');
-                grid.innerHTML = '<p style="color: var(--status-red); padding: 20px;">Erro de conexão. Verifique o Script.</p>';
-            }
+                render(data.items);
+            } catch (e) { grid.innerHTML = '<p>Erro de conexão.</p>'; }
         }
 
-        function renderItems(items) {
+        function render(items) {
             const grid = document.getElementById('grid');
             grid.innerHTML = '';
-
             items.forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'card';
-                card.onclick = () => item.type === 'folder' ? openFolder(item) : playTrack(item);
-                
-                card.innerHTML = `
-                    <div class="cover" style="background: ${getSoftGradient(item.name)}"></div>
-                    <div class="info">
-                        <span class="badge">${item.info}</span>
-                        <h3>${item.name}</h3>
-                    </div>
-                `;
+                card.onclick = () => item.type === 'folder' ? loadFolder(item.id) : play(item);
+                card.innerHTML = `<div class="cover" style="background: ${getGradient(item.name)}"></div>
+                                  <div class="info"><h3>${item.name}</h3></div>`;
                 grid.appendChild(card);
             });
         }
 
-        function openFolder(folder) {
-            document.getElementById('path-name').innerText = folder.name;
-            loadFolder(folder.id);
-        }
-
-        function playTrack(track) {
+        function play(track) {
             document.getElementById('p-title').innerText = track.name;
-            document.getElementById('p-art').style.background = getSoftGradient(track.name);
+            document.getElementById('p-art').style.background = getGradient(track.name);
             
-            // Agora o track.url já traz o link alt=media + API KEY vindo do script
-            audio.src = track.url;
+            // Usando link de export direto para evitar bloqueio do player
+            audio.src = track.url; 
             audio.load();
-            
-            audio.play().then(() => {
-                playBtn.innerText = "⏸";
-                playerCont.classList.add('playing');
-            }).catch(e => {
-                console.error("Play falhou:", e);
-                // Se falhar por bloqueio de autoplay, o usuário clica no play principal
-            });
+            audio.play().then(() => playBtn.innerText = "⏸").catch(e => console.log("Erro no play"));
         }
 
         function togglePlay() {
             if (!audio.src) return;
-            if (audio.paused) {
-                audio.play();
-                playBtn.innerText = "⏸";
-                playerCont.classList.add('playing');
-            } else {
-                audio.pause();
-                playBtn.innerText = "▶";
-                playerCont.classList.remove('playing');
-            }
+            if (audio.paused) { audio.play(); playBtn.innerText = "⏸"; }
+            else { audio.pause(); playBtn.innerText = "▶"; }
         }
 
         function seek(e) {
             if (!audio.duration) return;
-            const bar = e.currentTarget;
-            const pct = e.offsetX / bar.offsetWidth;
-            audio.currentTime = pct * audio.duration;
-        }
-
-        function goHome() {
-            document.getElementById('path-name').innerText = "Vault";
-            loadFolder();
+            audio.currentTime = (e.offsetX / e.currentTarget.offsetWidth) * audio.duration;
         }
 
         audio.ontimeupdate = () => {
             if (!audio.duration) return;
-            const pct = (audio.currentTime / audio.duration) * 100;
-            progressFill.style.width = `${pct}%`;
-            document.getElementById('curr-time').innerText = formatTime(audio.currentTime);
-            document.getElementById('total-time').innerText = formatTime(audio.duration);
+            barFill.style.width = (audio.currentTime / audio.duration * 100) + '%';
+            document.getElementById('curr-time').innerText = format(audio.currentTime);
+            document.getElementById('total-time').innerText = format(audio.duration);
         };
 
-        function formatTime(sec) {
-            if (isNaN(sec)) return "0:00";
-            const m = Math.floor(sec / 60);
-            const s = Math.floor(sec % 60);
-            return `${m}:${s < 10 ? '0' : ''}${s}`;
+        function format(s) {
+            const m = Math.floor(s / 60);
+            const sec = Math.floor(s % 60);
+            return `${m}:${sec < 10 ? '0' : ''}${sec}`;
         }
 
         loadFolder();
