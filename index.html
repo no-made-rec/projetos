@@ -18,65 +18,80 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; padding: 20px 20px 180px; }
+        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; padding: 20px 20px 180px; overflow-x: hidden; }
 
         /* HEADER */
         header { max-width: 1100px; margin: 0 auto; padding-top: 20px; }
         .header-content { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; }
-        .logo { font-weight: 700; font-size: 22px; letter-spacing: -1px; text-decoration: none; color: #fff; }
+        .logo { font-weight: 700; font-size: 24px; letter-spacing: -1.2px; text-decoration: none; color: #fff; transition: 0.3s; }
+        .logo:hover { opacity: 0.6; transform: translateX(-2px); }
         .logo span { color: var(--blue); font-weight: 400; }
 
         .api-status {
             display: flex; align-items: center; gap: 8px; padding: 6px 14px;
             background: #000; border-radius: 100px; border: 1px solid var(--border);
             font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--green);
+            transition: all 0.3s ease;
         }
-        .status-syncing { color: var(--red); border-color: var(--red); }
+        .status-syncing { color: var(--red); border-color: var(--red); box-shadow: 0 0 10px rgba(255,59,48,0.2); }
 
         .header-line { width: 100vw; height: 1px; background: var(--border); margin-left: calc(-50vw + 50%); margin-bottom: 50px; }
 
         /* NAV */
         .nav-container { max-width: 1100px; margin: 0 auto 40px; display: flex; justify-content: space-between; align-items: flex-end; }
-        .breadcrumbs { font-family: 'JetBrains Mono'; font-size: 10px; color: var(--text-dim); text-transform: uppercase; cursor: pointer; }
-        .nav-info { text-align: right; font-family: 'JetBrains Mono'; font-size: 9px; color: var(--text-dim); }
+        .breadcrumbs { font-family: 'JetBrains Mono'; font-size: 10px; color: var(--text-dim); text-transform: uppercase; cursor: pointer; transition: 0.2s; }
+        .breadcrumbs:hover { color: #fff; }
         .section-title { font-size: 42px; font-weight: 900; letter-spacing: -2px; }
 
         /* GRID */
         .grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 30px; }
-        .card { cursor: pointer; transition: 0.3s; position: relative; }
-        .card:hover { transform: translateY(-5px); }
-        .cover { width: 100%; aspect-ratio: 1; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 12px; }
+        .card { cursor: pointer; transition: all 0.4s cubic-bezier(0.2, 1, 0.2, 1); position: relative; }
+        .card:hover { transform: translateY(-10px) scale(1.02); }
+        .cover { width: 100%; aspect-ratio: 1; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 12px; transition: 0.3s; }
+        .card:hover .cover { border-color: var(--blue); box-shadow: 0 20px 40px rgba(0,122,255,0.15); }
         
         .version-tag {
-            position: absolute; top: 10px; right: 10px; background: #000; padding: 3px 6px; 
-            border-radius: 3px; font-family: 'JetBrains Mono'; font-size: 9px; color: var(--blue); border: 1px solid var(--blue);
+            position: absolute; top: 12px; right: 12px; background: #000; padding: 4px 8px; 
+            border-radius: 4px; font-family: 'JetBrains Mono'; font-size: 9px; color: var(--blue); border: 1px solid var(--blue);
         }
 
         .card-meta { display: flex; justify-content: space-between; font-family: 'JetBrains Mono'; font-size: 9px; color: var(--text-dim); margin-top: 5px; }
         .card h3 { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* PLAYER PILL 850px */
+        /* PLAYER PILL (ANIMADO) */
         .player-pill {
-            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
-            width: 95%; max-width: 850px; background: #0a0a0a; border: 1px solid var(--border);
-            border-radius: 100px; padding: 15px 35px; display: grid; grid-template-columns: 220px 1fr 100px;
-            align-items: center; gap: 40px; box-shadow: 0 40px 80px rgba(0,0,0,0.9); z-index: 1000;
+            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(150%);
+            width: 95%; max-width: 850px; background: rgba(10, 10, 10, 0.98);
+            backdrop-filter: blur(25px); border: 1px solid var(--border);
+            border-radius: 100px; padding: 15px 40px; display: grid; 
+            grid-template-columns: 180px 1fr 200px; align-items: center; gap: 30px;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.9); z-index: 1000;
+            transition: all 0.6s cubic-bezier(0.2, 1, 0.2, 1); opacity: 0;
         }
+        .player-visible { transform: translateX(-50%) translateY(0); opacity: 1; }
 
         .p-info { display: flex; align-items: center; gap: 14px; overflow: hidden; }
         .p-art { width: 44px; height: 44px; border-radius: 50%; background: #111; flex-shrink: 0; }
         .p-txt { font-family: 'JetBrains Mono'; font-size: 11px; overflow: hidden; }
         .p-txt .name { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .p-txt .sub { color: var(--text-dim); font-size: 9px; text-transform: uppercase; margin-top: 2px; }
+        .p-txt .sub { color: var(--text-dim); font-size: 9px; text-transform: uppercase; }
 
-        #waveform { width: 100%; height: 40px; cursor: pointer; }
-        .time-wrap { display: flex; justify-content: space-between; font-family: 'JetBrains Mono'; font-size: 9px; color: var(--blue); margin-top: 8px; }
+        #waveform { width: 100%; height: 35px; cursor: pointer; }
+        .time-wrap { display: flex; justify-content: space-between; font-family: 'JetBrains Mono'; font-size: 9px; color: var(--blue); margin-top: 6px; }
 
+        .p-controls { display: flex; align-items: center; gap: 15px; justify-content: flex-end; }
+        .btn-action { color: #555; cursor: pointer; transition: 0.2s; font-size: 14px; }
+        .btn-action:hover { color: #fff; transform: scale(1.1); }
         .btn-play {
-            width: 50px; height: 50px; background: rgba(0, 122, 255, 0.1); border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; color: var(--blue); cursor: pointer; transition: 0.2s;
+            width: 48px; height: 48px; background: rgba(0, 122, 255, 0.1); border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; color: var(--blue); cursor: pointer; transition: 0.2s; font-size: 16px;
         }
-        .btn-play:hover { transform: scale(1.1); background: rgba(0, 122, 255, 0.2); }
+        .btn-play:hover { transform: scale(1.1); background: var(--blue); color: #000; }
+
+        /* VOLUME SLIDER */
+        .volume-wrap { display: flex; align-items: center; gap: 8px; margin-left: 10px; }
+        .vol-slider { -webkit-appearance: none; width: 60px; height: 2px; background: #222; border-radius: 2px; }
+        .vol-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 8px; height: 8px; background: var(--blue); border-radius: 50%; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -94,15 +109,11 @@
             <div class="breadcrumbs" onclick="goHome()">ROOT > <span id="path-name">VAULT</span></div>
             <h1 class="section-title">Projetos</h1>
         </div>
-        <div class="nav-info">
-            LAST_UPDATE: <span id="last-update">--/--/--</span><br>
-            LOCATION: NÔMADE_SERVER_01
-        </div>
     </div>
 
     <div id="grid" class="grid"></div>
 
-    <div class="player-pill">
+    <div id="player" class="player-pill">
         <div class="p-info">
             <div id="p-art" class="p-art"></div>
             <div class="p-txt">
@@ -117,8 +128,14 @@
                 <span id="total-time">00:00</span>
             </div>
         </div>
-        <div style="display:flex; justify-content:flex-end;">
+        <div class="p-controls">
+            <span class="btn-action" onclick="skip(-5)">⏮</span>
             <div id="play-btn" class="btn-play" onclick="togglePlay()">▶</div>
+            <span class="btn-action" onclick="skip(5)">⏭</span>
+            <div class="volume-wrap">
+                <span style="font-size: 10px;">🔊</span>
+                <input type="range" class="vol-slider" min="0" max="1" step="0.1" value="0.8" oninput="setVol(this.value)">
+            </div>
         </div>
     </div>
 
@@ -133,7 +150,7 @@
             barWidth: 2,
             barRadius: 2,
             responsive: true,
-            height: 40,
+            height: 35,
             normalize: true
         });
 
@@ -143,11 +160,8 @@
         }
 
         async function load(fId = '') {
-            const status = document.getElementById('status');
             const resp = await fetch(fId ? `${SCRIPT_URL}?folderId=${fId}` : SCRIPT_URL);
             const data = await resp.json();
-            
-            document.getElementById('last-update').innerText = data.lastUpdate || "LIVE";
             render(data.items);
         }
 
@@ -174,6 +188,7 @@
 
         async function play(track) {
             const status = document.getElementById('status');
+            const player = document.getElementById('player');
             document.getElementById('p-title').innerText = track.name.toUpperCase();
             document.getElementById('p-art').style.background = getGrad(track.name);
             
@@ -185,6 +200,7 @@
             
             wavesurfer.load(`data:audio/mpeg;base64,${base64Data}`);
             wavesurfer.on('ready', () => {
+                player.classList.add('player-visible');
                 wavesurfer.play();
                 document.getElementById('play-btn').innerText = '⏸';
                 status.innerText = '• API SYNC';
@@ -197,8 +213,10 @@
             document.getElementById('play-btn').innerText = wavesurfer.isPlaying() ? '⏸' : '▶';
         }
 
+        function setVol(v) { wavesurfer.setVolume(v); }
+        function skip(v) { wavesurfer.skip(v); }
+
         function goHome() { document.getElementById('path-name').innerText = "VAULT"; load(); }
-        
         wavesurfer.on('audioprocess', () => { document.getElementById('curr-time').innerText = format(wavesurfer.getCurrentTime()); });
         wavesurfer.on('ready', () => { document.getElementById('total-time').innerText = format(wavesurfer.getDuration()); });
 
