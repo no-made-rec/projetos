@@ -3,87 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[nômade] vault</title>
+    <title>[nômade vault]</title>
+    <script src="https://unpkg.com/wavesurfer.js@7"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;600;800&display=swap');
 
         :root {
             --bg-main: #0a0a0a;
             --text-primary: #ffffff;
             --text-secondary: #888888;
             --nomade-blue: #007AFF;
-            --border-subtle: rgba(255, 255, 255, 0.1);
-            --glass-bg: rgba(15, 15, 15, 0.98);
+            --status-red: #FF3B30;
+            --status-green: #34C759;
+            --border: rgba(255, 255, 255, 0.1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
             background-color: var(--bg-main);
             color: var(--text-primary);
             font-family: 'Inter', sans-serif;
-            padding: 20px 20px 160px 20px;
+            padding: 20px 20px 180px 20px;
         }
 
-        /* HEADER */
-        header { max-width: 1100px; margin: 0 auto; padding-top: 20px; }
-        .header-content { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; }
-        .logo { font-weight: 700; font-size: 24px; letter-spacing: -1px; }
-        .logo span { color: var(--nomade-blue); }
-        .header-line { width: 100%; height: 1px; background: var(--border-subtle); margin-bottom: 40px; }
+        /* HEADER ORIGINAL [nômade vault] */
+        header {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding-top: 20px;
+        }
 
-        /* GRID */
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+        }
+
+        .logo { 
+            font-family: 'Inter', sans-serif;
+            font-weight: 700; 
+            font-size: 24px; 
+            letter-spacing: -1px; 
+        }
+        .logo span { color: var(--nomade-blue); font-weight: 400; }
+
+        .api-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 100px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+        .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--status-red); }
+        .status-active { border-color: var(--status-green); color: var(--status-green); }
+        .status-active .status-dot { background: var(--status-green); box-shadow: 0 0 8px var(--status-green); }
+
+        .header-line {
+            width: 100vw;
+            height: 1px;
+            background: var(--border);
+            margin-left: calc(-50vw + 50%);
+            margin-bottom: 40px;
+        }
+
+        /* GRID E CAPAS SATURADAS */
         .nav-container { max-width: 1100px; margin: 0 auto 35px; }
-        .section-title { font-size: 38px; font-weight: 700; letter-spacing: -1.5px; margin-top: 10px; }
-        .grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 30px; }
-        
+        .section-title { font-size: 38px; font-weight: 800; letter-spacing: -1.5px; }
+
+        .grid {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 30px;
+        }
         .card { cursor: pointer; transition: transform 0.3s ease; }
         .card:hover { transform: translateY(-5px); }
-        .cover { width: 100%; aspect-ratio: 1/1; border-radius: 12px; border: 1px solid var(--border-subtle); margin-bottom: 12px; }
-        .info h3 { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .cover { 
+            width: 100%; aspect-ratio: 1/1; border-radius: 12px; 
+            border: 1px solid var(--border); margin-bottom: 12px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .info h3 { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
 
-        /* PLAYER SIMÉTRICO (850px) */
+        /* PLAYER SIMÉTRICO 850px PILL */
         .player-pill {
             position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
             width: 95%; max-width: 850px;
-            background: var(--glass-bg);
-            border: 1px solid var(--border-subtle);
-            border-radius: 100px;
+            background: rgba(15, 15, 15, 0.98);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 100px; /* Arredondamento Antigo */
             padding: 12px 30px;
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr; /* 3 colunas iguais */
+            grid-template-columns: 220px 1fr 100px;
             align-items: center;
+            gap: 30px;
             box-shadow: 0 30px 60px rgba(0,0,0,0.8);
             z-index: 1000;
         }
 
-        /* Lado Esquerdo: Info */
         .p-info { display: flex; align-items: center; gap: 12px; overflow: hidden; }
-        .p-art { width: 44px; height: 44px; border-radius: 50%; background: #222; flex-shrink: 0; }
-        .p-txt { overflow: hidden; }
-        .p-txt div:first-child { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .p-txt div:last-child { font-size: 10px; color: var(--text-secondary); }
+        .p-art { width: 44px; height: 44px; border-radius: 50%; background: #222; flex-shrink: 0; transition: 0.3s; }
+        .p-txt { overflow: hidden; font-family: 'JetBrains Mono', monospace; }
+        .p-txt div:first-child { font-size: 12px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .p-txt div:last-child { font-size: 9px; color: var(--text-secondary); text-transform: uppercase; }
 
-        /* Centro: Botões */
-        .p-controls { display: flex; justify-content: center; align-items: center; gap: 20px; }
-        .btn-side { font-size: 16px; color: var(--text-secondary); cursor: pointer; transition: 0.2s; }
-        .btn-side:hover { color: #fff; }
-        .btn-main { 
-            width: 48px; height: 48px; background: rgba(0, 122, 255, 0.1); 
+        .waveform-container { width: 100%; position: relative; }
+        #waveform { width: 100%; height: 40px; }
+        .time-display { 
+            display: flex; justify-content: space-between; 
+            font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--nomade-blue);
+            margin-top: 6px;
+        }
+
+        .p-controls { display: flex; justify-content: flex-end; }
+        .btn-play {
+            width: 48px; height: 48px; background: rgba(0, 122, 255, 0.1);
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            color: var(--nomade-blue); font-size: 24px; cursor: pointer; transition: 0.2s;
+            color: var(--nomade-blue); font-size: 20px; cursor: pointer; transition: 0.2s;
         }
-        .btn-main:hover { transform: scale(1.05); background: rgba(0, 122, 255, 0.2); }
+        .btn-play:hover { transform: scale(1.05); background: rgba(0, 122, 255, 0.2); }
 
-        /* Lado Direito: Progresso */
-        .p-progress { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
-        .bar-container { width: 100%; max-width: 200px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; position: relative; cursor: pointer; }
-        .bar-fill { position: absolute; height: 100%; background: var(--nomade-blue); border-radius: 2px; width: 0%; }
-        .time-txt { font-size: 10px; color: var(--text-secondary); font-family: monospace; }
-
-        @media (max-width: 768px) {
-            .player-pill { grid-template-columns: 1fr 1fr; padding: 10px 20px; }
-            .p-progress { display: none; }
-        }
+        #loader { font-family: 'JetBrains Mono'; font-size: 10px; color: var(--text-secondary); padding: 20px; }
     </style>
 </head>
 <body>
@@ -91,12 +140,16 @@
     <header>
         <div class="header-content">
             <div class="logo">[ nômade <span>vault</span> ]</div>
+            <div id="api-status" class="api-status">
+                <div class="status-dot"></div>
+                VAULT_CONNECT: IDLE
+            </div>
         </div>
         <div class="header-line"></div>
     </header>
 
     <div class="nav-container">
-        <h1 id="view-title" class="section-title">Nômade Vault</h1>
+        <h1 id="view-title" class="section-title">Resources</h1>
     </div>
 
     <div id="grid" class="grid"></div>
@@ -105,46 +158,64 @@
         <div class="p-info">
             <div id="p-art" class="p-art"></div>
             <div class="p-txt">
-                <div id="p-title">Nenhuma faixa</div>
-                <div>Nômade Record's</div>
+                <div id="p-title">STANDBY</div>
+                <div>NÔMADE RECORD'S</div>
             </div>
         </div>
         
-        <div class="p-controls">
-            <span class="btn-side">⏮</span>
-            <div id="play-btn" class="btn-main" onclick="togglePlay()">▶</div>
-            <span class="btn-side">⏭</span>
+        <div class="waveform-container">
+            <div id="waveform"></div>
+            <div class="time-display">
+                <span id="curr-time">00:00</span>
+                <span id="total-time">00:00</span>
+            </div>
         </div>
 
-        <div class="p-progress">
-            <div class="bar-container" onclick="seek(event)"><div id="bar-fill" class="bar-fill"></div></div>
-            <div class="time-txt"><span id="curr-time">0:00</span> / <span id="total-time">0:00</span></div>
+        <div class="p-controls">
+            <div id="play-btn" class="btn-play" onclick="togglePlay()">▶</div>
         </div>
     </div>
 
-    <audio id="audio-player" crossorigin="anonymous"></audio>
-
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz1vN5ZhIopgWRlQpL2Uxkl4IZlQMTLeHMX4nKmZhewW2in5LFkmFNMJ5tBZHjfOj-N/exec';
-        const audio = document.getElementById('audio-player');
-        const playBtn = document.getElementById('play-btn');
-        const barFill = document.getElementById('bar-fill');
+        
+        const wavesurfer = WaveSurfer.create({
+            container: '#waveform',
+            waveColor: '#1a1a1a',
+            progressColor: '#007AFF',
+            cursorColor: '#007AFF',
+            barWidth: 2,
+            barRadius: 2,
+            responsive: true,
+            height: 40,
+            normalize: true,
+            interact: true,
+            backend: 'WebAudio' // Melhora a compatibilidade com processamento de áudio
+        });
 
         function getGradient(name) {
             const hash = name.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
-            return `linear-gradient(135deg, hsl(${hash % 360}, 70%, 50%), hsl(${(hash + 40) % 360}, 60%, 40%))`;
+            return `linear-gradient(135deg, hsl(${hash % 360}, 80%, 45%), #0d0d0d)`;
         }
 
-        async function loadFolder(folderId = '') {
+        async function loadVault(folderId = '') {
             const grid = document.getElementById('grid');
-            grid.innerHTML = '<p style="color: #444; padding: 20px;">Carregando...</p>';
+            const status = document.getElementById('api-status');
+            grid.innerHTML = '<div id="loader">SYNCING_DATA...</div>';
+
             try {
                 const url = folderId ? `${SCRIPT_URL}?folderId=${folderId}` : SCRIPT_URL;
                 const response = await fetch(url, { method: 'GET', redirect: 'follow' });
                 const data = await response.json();
+
+                status.classList.add('status-active');
+                status.innerHTML = '<div class="status-dot"></div> VAULT_CONNECT: ACTIVE';
                 document.getElementById('view-title').innerText = data.folderName || "Vault";
                 render(data.items);
-            } catch (e) { grid.innerHTML = '<p>Erro de conexão.</p>'; }
+            } catch (e) {
+                status.classList.remove('status-active');
+                status.innerHTML = '<div class="status-dot"></div> VAULT_CONNECT: ERROR';
+            }
         }
 
         function render(items) {
@@ -153,40 +224,52 @@
             items.forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'card';
-                card.onclick = () => item.type === 'folder' ? loadFolder(item.id) : play(item);
-                card.innerHTML = `<div class="cover" style="background: ${getGradient(item.name)}"></div>
-                                  <div class="info"><h3>${item.name}</h3></div>`;
+                card.onclick = () => item.type === 'folder' ? loadVault(item.id) : playTrack(item);
+                
+                card.innerHTML = `
+                    <div class="cover" style="background: ${getGradient(item.name)}"></div>
+                    <div class="info"><h3>${item.name}</h3></div>
+                `;
                 grid.appendChild(card);
             });
         }
 
-        function play(track) {
-            document.getElementById('p-title').innerText = track.name;
+        function playTrack(track) {
+            document.getElementById('p-title').innerText = track.name.toUpperCase();
             document.getElementById('p-art').style.background = getGradient(track.name);
+            document.getElementById('p-art').style.borderRadius = '50%';
             
-            // Usando link de export direto para evitar bloqueio do player
-            audio.src = track.url; 
-            audio.load();
-            audio.play().then(() => playBtn.innerText = "⏸").catch(e => console.log("Erro no play"));
+            wavesurfer.load(track.url);
+            
+            wavesurfer.on('ready', () => {
+                wavesurfer.play();
+                document.getElementById('play-btn').innerText = '⏸';
+            });
+
+            // Fallback para erro de áudio
+            wavesurfer.on('error', (e) => {
+                console.error("Erro ao carregar áudio:", e);
+                alert("Erro ao carregar o áudio. Verifique se o arquivo no Drive permite download direto.");
+            });
         }
 
         function togglePlay() {
-            if (!audio.src) return;
-            if (audio.paused) { audio.play(); playBtn.innerText = "⏸"; }
-            else { audio.pause(); playBtn.innerText = "▶"; }
+            if (!wavesurfer.isPlaying()) {
+                wavesurfer.play();
+                document.getElementById('play-btn').innerText = '⏸';
+            } else {
+                wavesurfer.pause();
+                document.getElementById('play-btn').innerText = '▶';
+            }
         }
 
-        function seek(e) {
-            if (!audio.duration) return;
-            audio.currentTime = (e.offsetX / e.currentTarget.offsetWidth) * audio.duration;
-        }
+        wavesurfer.on('audioprocess', () => {
+            document.getElementById('curr-time').innerText = format(wavesurfer.getCurrentTime());
+        });
 
-        audio.ontimeupdate = () => {
-            if (!audio.duration) return;
-            barFill.style.width = (audio.currentTime / audio.duration * 100) + '%';
-            document.getElementById('curr-time').innerText = format(audio.currentTime);
-            document.getElementById('total-time').innerText = format(audio.duration);
-        };
+        wavesurfer.on('ready', () => {
+            document.getElementById('total-time').innerText = format(wavesurfer.getDuration());
+        });
 
         function format(s) {
             const m = Math.floor(s / 60);
@@ -194,7 +277,7 @@
             return `${m}:${sec < 10 ? '0' : ''}${sec}`;
         }
 
-        loadFolder();
+        loadVault();
     </script>
 </body>
 </html>
