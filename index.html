@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[nômade] vault</title>
+    <title>[nômade vault]</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
@@ -12,32 +12,45 @@
             --text-primary: #ffffff;
             --text-secondary: #888888;
             --nomade-blue: #007AFF;
-            --status-red: #FF3B30;
             --status-green: #34C759;
-            --glass-bg: rgba(25, 25, 25, 0.85);
-            --radius-main: 12px;
+            --glass-bg: rgba(18, 18, 18, 0.95);
+            --radius-main: 14px;
+            --border-subtle: rgba(255, 255, 255, 0.08);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
             background-color: var(--bg-main);
             color: var(--text-primary);
             font-family: 'Inter', sans-serif;
-            padding: 20px 20px 140px 20px;
+            padding: 20px 20px 160px 20px;
             -webkit-font-smoothing: antialiased;
         }
 
+        /* HEADER */
         header {
             max-width: 1100px;
-            margin: 0 auto 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            margin: 0 auto;
             padding-top: 20px;
         }
 
-        .logo { font-weight: 700; font-size: 22px; letter-spacing: -1px; }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .logo { font-weight: 700; font-size: 24px; letter-spacing: -1px; }
         .logo span { color: var(--nomade-blue); }
+
+        .header-line {
+            width: 100%;
+            height: 1px;
+            background: var(--border-subtle);
+            margin-bottom: 40px;
+        }
 
         .drive-status {
             display: flex;
@@ -48,103 +61,115 @@
             border-radius: 20px;
             font-size: 10px;
             font-weight: 700;
-            border: 1px solid transparent;
+            color: var(--text-secondary);
         }
-        .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--status-red); }
-        .status-active { border-color: var(--status-green); color: var(--status-green); }
+        .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-secondary); }
+        .status-active { border-color: var(--status-green); color: var(--status-green); border: 1px solid; }
         .status-active .status-dot { background: var(--status-green); box-shadow: 0 0 8px var(--status-green); }
 
+        /* NAVEGAÇÃO */
         .nav-container { max-width: 1100px; margin: 0 auto 35px; }
         .breadcrumbs { font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; cursor: pointer; }
-        .section-title { font-size: 36px; font-weight: 700; letter-spacing: -1.5px; }
+        .section-title { font-size: 38px; font-weight: 700; letter-spacing: -1.5px; }
 
+        /* GRID */
         .grid {
             max-width: 1100px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 32px;
         }
 
         .card { cursor: pointer; transition: transform 0.3s ease; }
-        .card:hover { transform: translateY(-4px); }
+        .card:hover { transform: translateY(-6px); }
 
         .cover {
             width: 100%; aspect-ratio: 1/1; border-radius: var(--radius-main);
             margin-bottom: 14px;
-            border: 1px solid rgba(255,255,255,0.03);
+            border: 1px solid var(--border-subtle);
             transition: all 0.3s;
         }
-        .card:hover .cover { border-color: rgba(0, 122, 255, 0.5); box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
+        .card:hover .cover { border-color: var(--nomade-blue); box-shadow: 0 12px 30px rgba(0,0,0,0.5); }
 
-        .info h3 { font-size: 15px; font-weight: 500; margin-bottom: 5px; color: #eee; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .info h3 { font-size: 15px; font-weight: 500; margin-bottom: 5px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .badge {
-            display: inline-block; padding: 1px 7px; border-radius: 4px;
-            background: rgba(0, 122, 255, 0.1); color: var(--nomade-blue);
-            font-size: 9px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;
+            display: inline-block; padding: 2px 8px; border-radius: 5px;
+            background: rgba(0, 122, 255, 0.12); color: var(--nomade-blue);
+            font-size: 10px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;
         }
 
-        /* PLAYER PILL */
+        /* PLAYER REPAGINADO (850px) */
         .player-pill {
-            position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 680px; background: var(--glass-bg);
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 100px;
-            padding: 12px 20px; display: flex; align-items: center; gap: 18px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5); z-index: 1000;
+            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+            width: 95%; max-width: 850px; 
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--border-subtle); border-radius: 100px;
+            padding: 16px 28px; display: flex; align-items: center; gap: 24px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6); z-index: 1000;
         }
 
-        .p-info { display: flex; align-items: center; gap: 12px; width: 170px; overflow: hidden; }
-        .p-art { width: 42px; height: 42px; border-radius: 50%; background: var(--nomade-blue); flex-shrink: 0; }
-        .p-controls { flex-grow: 1; display: flex; flex-direction: column; gap: 6px; }
-        .p-btns { display: flex; justify-content: center; gap: 25px; font-size: 18px; color: #fff; }
-        .btn-main { color: var(--nomade-blue); font-size: 26px; cursor: pointer; }
+        .p-info { display: flex; align-items: center; gap: 14px; width: 220px; overflow: hidden; }
+        .p-art { width: 48px; height: 48px; border-radius: 50%; background: var(--nomade-blue); flex-shrink: 0; transition: transform 0.4s; }
+        .playing .p-art { animation: rotate 8s linear infinite; }
+
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .p-controls { flex-grow: 1; display: flex; flex-direction: column; gap: 8px; }
+        .p-btns { display: flex; justify-content: center; gap: 30px; font-size: 20px; color: #fff; align-items: center; }
+        .btn-main { color: var(--nomade-blue); font-size: 32px; cursor: pointer; transition: transform 0.2s; }
+        .btn-main:hover { transform: scale(1.1); }
         
-        .progress-wrapper { display: flex; align-items: center; gap: 10px; font-size: 10px; color: var(--text-secondary); }
-        .progress-bar { flex-grow: 1; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; position: relative; }
-        .progress-fill { position: absolute; height: 100%; background: var(--nomade-blue); border-radius: 2px; width: 0%; transition: width 0.1s linear; }
+        .progress-wrapper { display: flex; align-items: center; gap: 12px; font-size: 11px; color: var(--text-secondary); }
+        .progress-bar { flex-grow: 1; height: 4px; background: rgba(255,255,255,0.08); border-radius: 10px; position: relative; cursor: pointer; }
+        .progress-fill { position: absolute; height: 100%; background: var(--nomade-blue); border-radius: 10px; width: 0%; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo">[ nômade <span>vault</span> ]</div>
-        <div id="drive-status" class="drive-status">
-            <div class="status-dot"></div>
-            GOOGLE DRIVE
+        <div class="header-content">
+            <div class="logo">[ nômade <span>vault</span> ]</div>
+            <div id="drive-status" class="drive-status">
+                <div class="status-dot"></div>
+                GOOGLE DRIVE API
+            </div>
         </div>
+        <div class="header-line"></div>
     </header>
 
     <div class="nav-container">
         <div class="breadcrumbs" onclick="goHome()">Início > <span id="path-name">Vault</span></div>
-        <h1 id="view-title" class="section-title">Nômade Vault</h1>
+        <h1 id="view-title" class="section-title">Carregando...</h1>
     </div>
 
     <div id="grid" class="grid"></div>
 
-    <div class="player-pill">
+    <div id="player-container" class="player-pill">
         <div class="p-info">
             <div id="p-art" class="p-art"></div>
             <div style="overflow: hidden;">
-                <div id="p-title" style="font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Nenhuma faixa</div>
-                <div style="font-size: 10px; color: var(--text-secondary);">Nômade Record's</div>
+                <div id="p-title" style="font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Nenhuma faixa</div>
+                <div style="font-size: 11px; color: var(--text-secondary);">Nômade Record's</div>
             </div>
         </div>
+        
         <div class="p-controls">
             <div class="p-btns">
-                <span style="opacity:0.3; cursor:default">⏮</span>
+                <span style="opacity:0.3; cursor:default; font-size: 16px;">⏮</span>
                 <span id="play-btn" class="btn-main" onclick="togglePlay()">▶</span>
-                <span style="opacity:0.3; cursor:default">⏭</span>
+                <span style="opacity:0.3; cursor:default; font-size: 16px;">⏭</span>
             </div>
             <div class="progress-wrapper">
                 <span id="curr-time">0:00</span>
-                <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+                <div class="progress-bar" onclick="seek(event)"><div id="progress-fill" class="progress-fill"></div></div>
                 <span id="total-time">0:00</span>
             </div>
         </div>
     </div>
 
-    <audio id="audio-player" crossorigin="anonymous"></audio>
+    <audio id="audio-player" crossorigin="anonymous" style="display:none;"></audio>
 
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz1vN5ZhIopgWRlQpL2Uxkl4IZlQMTLeHMX4nKmZhewW2in5LFkmFNMJ5tBZHjfOj-N/exec';
@@ -152,23 +177,22 @@
         const audio = document.getElementById('audio-player');
         const playBtn = document.getElementById('play-btn');
         const progressFill = document.getElementById('progress-fill');
+        const playerCont = document.getElementById('player-container');
 
         function getSoftGradient(name) {
             const hash = name.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
             const baseHue = hash % 360;
-            return `linear-gradient(145deg, hsl(${baseHue}, 85%, 55%), hsl(${(baseHue + 25) % 360}, 80%, 45%))`;
+            return `linear-gradient(135deg, hsl(${baseHue}, 70%, 50%), hsl(${(baseHue + 40) % 360}, 60%, 40%))`;
         }
 
         async function loadFolder(folderId = '') {
             const grid = document.getElementById('grid');
             const statusBtn = document.getElementById('drive-status');
-            grid.innerHTML = '<p style="color: var(--text-secondary); padding: 20px;">Sincronizando com Nômade Drive...</p>';
+            grid.innerHTML = '<p style="color: var(--text-secondary); padding: 20px;">Sincronizando...</p>';
 
             try {
                 const url = folderId ? `${SCRIPT_URL}?folderId=${folderId}` : SCRIPT_URL;
                 const response = await fetch(url, { method: 'GET', redirect: 'follow' });
-                
-                if (!response.ok) throw new Error();
                 const data = await response.json();
 
                 statusBtn.classList.add('status-active');
@@ -176,18 +200,13 @@
                 renderItems(data.items);
             } catch (error) {
                 statusBtn.classList.remove('status-active');
-                grid.innerHTML = '<p style="color: var(--status-red); padding: 20px;">Erro de conexão.</p>';
+                grid.innerHTML = '<p style="color: var(--status-red); padding: 20px;">Erro de conexão. Verifique o Script.</p>';
             }
         }
 
         function renderItems(items) {
             const grid = document.getElementById('grid');
             grid.innerHTML = '';
-
-            if (!items || items.length === 0) {
-                grid.innerHTML = '<p style="color: var(--text-secondary); padding: 20px;">Pasta vazia ou sem áudios.</p>';
-                return;
-            }
 
             items.forEach(item => {
                 const card = document.createElement('div');
@@ -214,14 +233,16 @@
             document.getElementById('p-title').innerText = track.name;
             document.getElementById('p-art').style.background = getSoftGradient(track.name);
             
-            // Link otimizado para o player web do Google Drive
-            audio.src = `https://docs.google.com/uc?export=download&id=${track.id}`;
+            // Agora o track.url já traz o link alt=media + API KEY vindo do script
+            audio.src = track.url;
             audio.load();
             
             audio.play().then(() => {
                 playBtn.innerText = "⏸";
+                playerCont.classList.add('playing');
             }).catch(e => {
-                console.warn("Autoplay bloqueado ou erro no link.");
+                console.error("Play falhou:", e);
+                // Se falhar por bloqueio de autoplay, o usuário clica no play principal
             });
         }
 
@@ -230,10 +251,19 @@
             if (audio.paused) {
                 audio.play();
                 playBtn.innerText = "⏸";
+                playerCont.classList.add('playing');
             } else {
                 audio.pause();
                 playBtn.innerText = "▶";
+                playerCont.classList.remove('playing');
             }
+        }
+
+        function seek(e) {
+            if (!audio.duration) return;
+            const bar = e.currentTarget;
+            const pct = e.offsetX / bar.offsetWidth;
+            audio.currentTime = pct * audio.duration;
         }
 
         function goHome() {
