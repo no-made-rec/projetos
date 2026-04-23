@@ -7,258 +7,240 @@
     <script src="https://unpkg.com/wavesurfer.js@7"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;700;900&display=swap');
-
-        :root {
-            --bg: #050505;
-            --blue: #007AFF;
-            --green: #34C759;
-            --red: #FF3B30;
-            --border: rgba(255, 255, 255, 0.08);
-            --text-dim: #444;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            background-color: var(--bg); 
-            color: #fff; 
-            font-family: 'Inter', sans-serif; 
-            padding: 20px 20px 180px 20px; 
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* HEADER & STATUS */
-        header { max-width: 1100px; margin: 0 auto; padding-top: 20px; }
-        .header-content { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; }
+        :root { --bg: #050505; --blue: #007AFF; --border: rgba(255,255,255,0.08); --dim: #555; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; padding: 40px; }
         
-        .logo { font-weight: 700; font-size: 24px; letter-spacing: -1.2px; text-decoration: none; color: #fff; transition: 0.3s; }
-        .logo:hover { opacity: 0.6; }
+        /* HEADER */
+        .header { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto 60px; }
+        .logo { font-weight: 900; font-size: 22px; text-decoration:none; color:#fff; letter-spacing:-1px; }
         .logo span { color: var(--blue); font-weight: 400; }
+        .api-status { font-family: 'JetBrains Mono'; font-size: 10px; color: #34C759; border: 1px solid var(--border); padding: 6px 15px; border-radius: 100px; }
+        .syncing { color: #FF3B30; border-color: #FF3B30; }
 
-        .api-status {
-            display: flex; align-items: center; gap: 8px; padding: 6px 14px;
-            background: #000; border-radius: 100px; border: 1px solid var(--border);
-            font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--green);
-            transition: all 0.3s ease;
-        }
-        .status-syncing { color: var(--red) !important; border-color: var(--red) !important; box-shadow: 0 0 10px rgba(255,59,48,0.2); }
-
-        .header-line { width: 100vw; height: 1px; background: var(--border); margin-left: calc(-50vw + 50%); margin-bottom: 50px; }
-
-        /* NAV */
-        .nav-container { max-width: 1100px; margin: 0 auto 40px; display: flex; justify-content: space-between; align-items: flex-end; }
-        .breadcrumbs { font-family: 'JetBrains Mono'; font-size: 10px; color: var(--text-dim); text-transform: uppercase; cursor: pointer; transition: 0.2s; }
-        .breadcrumbs:hover { color: #fff; }
-        .section-title { font-size: 42px; font-weight: 900; letter-spacing: -2px; margin-top: 5px; }
-
-        /* GRID */
-        .grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 30px; }
-        .card { cursor: pointer; transition: all 0.4s cubic-bezier(0.2, 1, 0.2, 1); position: relative; }
-        .card:hover { transform: translateY(-10px) scale(1.02); }
-        .cover { 
-            width: 100%; aspect-ratio: 1; border-radius: 12px; border: 1px solid var(--border); 
-            margin-bottom: 12px; transition: 0.3s; 
-        }
-        .card:hover .cover { border-color: var(--blue); box-shadow: 0 20px 40px rgba(0,122,255,0.15); }
+        /* VIEW MODES */
+        .container { max-width: 1200px; margin: 0 auto; }
+        .section-header { margin-bottom: 40px; }
+        .section-header h1 { font-size: 48px; font-weight: 900; letter-spacing: -2px; }
         
-        .version-tag {
-            position: absolute; top: 12px; right: 12px; background: #000; padding: 4px 8px; 
-            border-radius: 4px; font-family: 'JetBrains Mono'; font-size: 9px; color: var(--blue); border: 1px solid var(--blue);
-        }
+        /* MODO GRADE (PASTAS) */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 30px; }
+        .folder-card { cursor: pointer; transition: 0.3s; }
+        .folder-card:hover { transform: translateY(-5px); }
+        .folder-box { width: 100%; aspect-ratio: 1.5; background: #111; border: 1px solid var(--border); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 40px; margin-bottom: 15px; }
+        .folder-card h3 { font-size: 14px; margin-bottom: 5px; }
+        .folder-card span { font-family: 'JetBrains Mono'; font-size: 10px; color: var(--dim); }
 
-        .card-meta { display: flex; justify-content: space-between; font-family: 'JetBrains Mono'; font-size: 9px; color: var(--text-dim); margin-top: 5px; }
-        .card h3 { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        /* MODO TRACKLIST (DENTRO DO PROJETO) */
+        .project-view { display: grid; grid-template-columns: 350px 1fr; gap: 60px; opacity: 0; animation: fadeIn 0.5s forwards; }
+        .project-cover { width: 350px; height: 350px; border-radius: 12px; position: sticky; top: 40px; }
+        .tracklist { list-style: none; }
+        .track-item { padding: 15px 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s; }
+        .track-item:hover { color: var(--blue); }
+        .track-item.active { color: var(--blue); font-weight: 700; }
+        .track-name { font-family: 'JetBrains Mono'; font-size: 13px; }
 
-        /* PLAYER PILL (ANIMADO) */
-        .player-pill {
-            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(150%);
-            width: 95%; max-width: 850px; background: rgba(10, 10, 10, 0.98);
-            backdrop-filter: blur(25px); border: 1px solid var(--border);
-            border-radius: 100px; padding: 15px 40px; display: grid; 
-            grid-template-columns: 200px 1fr 220px; align-items: center; gap: 35px;
-            box-shadow: 0 40px 80px rgba(0,0,0,0.9); z-index: 1000;
-            transition: all 0.6s cubic-bezier(0.2, 1, 0.2, 1); opacity: 0; pointer-events: none;
-        }
-        .player-visible { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: auto; }
+        /* RECALLS */
+        .recall-section { margin-top: 40px; border-top: 1px solid var(--border); padding-top: 20px; }
+        .recall-input-wrap { display: flex; gap: 10px; margin-bottom: 20px; }
+        input[type="text"] { background: #111; border: 1px solid var(--border); padding: 10px; color: #fff; border-radius: 4px; flex: 1; font-family: 'JetBrains Mono'; }
+        .recall-list { font-family: 'JetBrains Mono'; font-size: 12px; color: var(--dim); }
+        .recall-item { margin-bottom: 8px; cursor: pointer; }
+        .recall-item b { color: var(--blue); }
 
-        .p-info { display: flex; align-items: center; gap: 14px; overflow: hidden; }
-        .p-art { width: 44px; height: 44px; border-radius: 50%; background: #111; flex-shrink: 0; }
-        .p-txt { font-family: 'JetBrains Mono'; font-size: 11px; overflow: hidden; }
-        .p-txt .name { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: 0.2s; cursor: pointer; }
-        .p-txt .name:hover { color: var(--blue); text-decoration: underline; }
-        .p-txt .sub { color: var(--text-dim); font-size: 9px; text-transform: uppercase; }
-
-        #waveform { width: 100%; height: 35px; cursor: pointer; }
-        .time-wrap { display: flex; justify-content: space-between; font-family: 'JetBrains Mono'; font-size: 9px; color: var(--blue); margin-top: 6px; }
-
+        /* PLAYER PILL */
+        .player-pill { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(200px); width: 850px; background: rgba(10,10,10,0.95); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 100px; padding: 15px 40px; display: grid; grid-template-columns: 180px 1fr 200px; gap: 30px; align-items: center; transition: 0.5s cubic-bezier(0.17, 0.67, 0.83, 0.67); }
+        .player-visible { transform: translateX(-50%) translateY(0); }
+        .p-info { overflow: hidden; }
+        .p-info div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: 'JetBrains Mono'; font-size: 11px; }
         .p-controls { display: flex; align-items: center; gap: 15px; justify-content: flex-end; }
-        .btn-action { color: #555; cursor: pointer; transition: 0.2s; font-size: 14px; }
-        .btn-action:hover { color: #fff; transform: scale(1.1); }
-        .btn-play {
-            width: 48px; height: 48px; background: rgba(0, 122, 255, 0.1); border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; color: var(--blue); cursor: pointer; transition: 0.2s; font-size: 16px;
-        }
-        .btn-play:hover { transform: scale(1.1); background: var(--blue); color: #000; }
+        .btn { cursor: pointer; font-size: 18px; transition: 0.2s; }
+        .btn:hover { color: var(--blue); scale: 1.1; }
 
-        /* VOLUME SLIDER */
-        .volume-wrap { display: flex; align-items: center; gap: 8px; margin-left: 10px; }
-        .vol-slider { -webkit-appearance: none; width: 60px; height: 2px; background: #222; border-radius: 2px; }
-        .vol-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 10px; height: 10px; background: var(--blue); border-radius: 50%; cursor: pointer; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="header-content">
-            <a href="https://tr.ee/nomaderecords" target="_blank" class="logo">[ nômade <span>vault</span> ]</a>
-            <div id="status" class="api-status">• API SYNC</div>
-        </div>
-        <div class="header-line"></div>
-    </header>
-
-    <div class="nav-container">
-        <div>
-            <div class="breadcrumbs" onclick="goHome()">ROOT > <span id="path-name">VAULT</span></div>
-            <h1 class="section-title">Projetos</h1>
-        </div>
+    <div class="header">
+        <a href="https://tr.ee/nomaderecords" target="_blank" class="logo">[ nômade <span>vault</span> ]</a>
+        <div id="status" class="api-status">• API SYNC</div>
     </div>
 
-    <div id="grid" class="grid"></div>
+    <div class="container">
+        <div class="section-header">
+            <div id="breadcrumb" style="font-family:'JetBrains Mono'; font-size:10px; color:var(--dim); cursor:pointer; margin-bottom:10px;" onclick="load()">ROOT > VAULT</div>
+            <h1 id="title">Projetos</h1>
+        </div>
+        <div id="content"></div>
+    </div>
 
     <div id="player" class="player-pill">
         <div class="p-info">
-            <div id="p-art" class="p-art"></div>
-            <div class="p-txt">
-                <div id="p-title" class="name" onclick="goToParentFolder()">IDLE_SYSTEM</div>
-                <div class="sub">NÔMADE_RECORDS</div>
-            </div>
+            <div id="p-name" style="font-weight:700">IDLE</div>
+            <div style="color:var(--dim); font-size:9px">NÔMADE RECORD'S</div>
         </div>
-        <div class="waveform-wrap">
+        <div class="p-mid">
             <div id="waveform"></div>
-            <div class="time-wrap">
-                <span id="curr-time">00:00</span>
-                <span id="total-time">00:00</span>
+            <div style="display:flex; justify-content:space-between; font-family:'JetBrains Mono'; font-size:9px; color:var(--blue); margin-top:5px;">
+                <span id="c-time">00:00</span>
+                <span id="t-time">00:00</span>
             </div>
         </div>
         <div class="p-controls">
-            <span class="btn-action" onclick="skip(-5)">⏮</span>
-            <div id="play-btn" class="btn-play" onclick="togglePlay()">▶</div>
-            <span class="btn-action" onclick="skip(5)">⏭</span>
-            <div class="volume-wrap">
-                <span style="font-size: 10px;">🔊</span>
-                <input type="range" class="vol-slider" min="0" max="1" step="0.1" value="0.8" oninput="setVol(this.value)">
-            </div>
+            <span class="btn" id="prev-btn">⏮</span>
+            <span class="btn" id="play-btn" onclick="wavesurfer.playPause()">▶</span>
+            <span class="btn" id="next-btn">⏭</span>
+            <input type="range" min="0" max="1" step="0.1" value="0.8" oninput="wavesurfer.setVolume(this.value)" style="width:50px;">
         </div>
     </div>
 
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz1vN5ZhIopgWRlQpL2Uxkl4IZlQMTLeHMX4nKmZhewW2in5LFkmFNMJ5tBZHjfOj-N/exec';
-        let currentTrackParentId = null;
+        let currentTracks = [];
+        let currentIndex = -1;
 
         const wavesurfer = WaveSurfer.create({
             container: '#waveform',
-            waveColor: '#1a1a1a',
+            waveColor: '#222',
             progressColor: '#007AFF',
-            cursorColor: '#007AFF',
+            height: 30,
             barWidth: 2,
-            barRadius: 2,
-            responsive: true,
-            height: 35,
             normalize: true
         });
 
-        function getGrad(name) {
-            const h = name.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) % 360;
-            return `linear-gradient(135deg, hsl(${h}, 90%, 40%), #000)`;
-        }
-
-        async function load(fId = '') {
-            const grid = document.getElementById('grid');
-            grid.style.opacity = '0.5';
-            const resp = await fetch(fId ? `${SCRIPT_URL}?folderId=${fId}` : SCRIPT_URL);
-            const data = await resp.json();
-            grid.style.opacity = '1';
+        async function load(id = '') {
+            const content = document.getElementById('content');
+            content.innerHTML = '<div style="font-family:JetBrains Mono; color:var(--dim)">LOADING_VAULT...</div>';
+            
+            const res = await fetch(id ? `${SCRIPT_URL}?folderId=${id}` : SCRIPT_URL);
+            const data = await res.json();
+            
+            document.getElementById('title').innerText = data.name === 'Root' ? 'Projetos' : data.name;
             render(data.items);
         }
 
         function render(items) {
-            const grid = document.getElementById('grid'); grid.innerHTML = '';
-            items.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.onclick = () => item.type === 'folder' ? openFolder(item) : play(item);
+            const content = document.getElementById('content');
+            content.innerHTML = '';
+            
+            const hasFiles = items.some(i => i.type === 'file');
+            
+            if (hasFiles) {
+                // MODO PROJETO (CAPA + TRACKLIST)
+                currentTracks = items.filter(i => i.type === 'file');
+                const projectDiv = document.createElement('div');
+                projectDiv.className = 'project-view';
                 
-                const v = item.name.match(/V\d+/i);
-                const tag = v ? `<div class="version-tag">${v[0].toUpperCase()}</div>` : '';
-                const info = item.type === 'folder' ? item.count : item.size;
-
-                card.innerHTML = `
-                    ${tag}
-                    <div class="cover" style="background:${getGrad(item.name)}"></div>
-                    <h3>${item.name}</h3>
-                    <div class="card-meta"><span>${info}</span><span>${item.updated}</span></div>
+                const grad = `linear-gradient(135deg, hsl(${Math.random()*360},70%,50%), #000)`;
+                
+                projectDiv.innerHTML = `
+                    <div>
+                        <div class="project-cover" style="background:${grad}"></div>
+                        <div class="recall-section">
+                            <div class="recall-input-wrap">
+                                <input type="text" id="recall-msg" placeholder="Adicionar Recall...">
+                                <button onclick="addRecall()" style="background:var(--blue); border:none; padding:0 15px; border-radius:4px; color:#fff; cursor:pointer">+</button>
+                            </div>
+                            <div id="recall-list" class="recall-list"></div>
+                        </div>
+                    </div>
+                    <ul class="tracklist">
+                        ${currentTracks.map((t, i) => `
+                            <li class="track-item" onclick="play(${i})">
+                                <span class="track-name">${t.name}</span>
+                                <span style="font-family:JetBrains Mono; font-size:10px; color:var(--dim)">${t.size}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
                 `;
-                grid.appendChild(card);
+                content.appendChild(projectDiv);
+            } else {
+                // MODO GRADE (PASTAS)
+                const grid = document.createElement('div');
+                grid.className = 'grid';
+                items.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'folder-card';
+                    card.onclick = () => load(item.id);
+                    card.innerHTML = `
+                        <div class="folder-box">📁</div>
+                        <h3>${item.name}</h3>
+                        <span>${item.meta}</span>
+                    `;
+                    grid.appendChild(card);
+                });
+                content.appendChild(grid);
+            }
+        }
+
+        async function play(index) {
+            const track = currentTracks[index];
+            currentIndex = index;
+            const status = document.getElementById('status');
+            
+            status.innerText = '• SYNCING...';
+            status.classList.add('syncing');
+            
+            const res = await fetch(`${SCRIPT_URL}?fileId=${track.id}`);
+            const base64 = await res.text();
+            
+            wavesurfer.load(`data:audio/mpeg;base64,${base64}`);
+            wavesurfer.on('ready', () => {
+                document.getElementById('player').classList.add('player-visible');
+                document.getElementById('p-name').innerText = track.name;
+                wavesurfer.play();
+                status.innerText = '• API SYNC';
+                status.classList.remove('syncing');
+                updateRecalls();
             });
         }
 
-        function openFolder(f) {
-            document.getElementById('path-name').innerText = f.name.toUpperCase();
-            load(f.id);
-        }
+        // CONTROLES DE FLUXO (DOUBLE CLICK LOGIC)
+        let lastClick = 0;
+        document.getElementById('next-btn').onclick = () => {
+            const now = Date.now();
+            if (now - lastClick < 300) { if(currentIndex < currentTracks.length-1) play(currentIndex+1); }
+            else { wavesurfer.skip(5); }
+            lastClick = now;
+        };
+        document.getElementById('prev-btn').onclick = () => {
+            const now = Date.now();
+            if (now - lastClick < 300) { if(currentIndex > 0) play(currentIndex-1); }
+            else { wavesurfer.skip(-5); }
+            lastClick = now;
+        };
 
-        async function play(track) {
-            const status = document.getElementById('status');
-            const player = document.getElementById('player');
+        // SISTEMA DE RECALL
+        function addRecall() {
+            const msg = document.getElementById('recall-msg').value;
+            if (!msg || currentIndex === -1) return;
+            const time = wavesurfer.getCurrentTime();
+            const trackId = currentTracks[currentIndex].id;
             
-            currentTrackParentId = track.parentId;
-            document.getElementById('p-title').innerText = track.name.toUpperCase();
-            document.getElementById('p-art').style.background = getGrad(track.name);
+            const recalls = JSON.parse(localStorage.getItem('recalls') || '{}');
+            if(!recalls[trackId]) recalls[trackId] = [];
+            recalls[trackId].push({ time, msg });
+            localStorage.setItem('recalls', JSON.stringify(recalls));
             
-            status.innerText = '• SYNCING_AUDIO...';
-            status.classList.add('status-syncing');
-
-            try {
-                const resp = await fetch(`${SCRIPT_URL}?fileId=${track.id}`);
-                const base64Data = await resp.text();
-                
-                wavesurfer.load(`data:audio/mpeg;base64,${base64Data}`);
-                wavesurfer.on('ready', () => {
-                    player.classList.add('player-visible');
-                    wavesurfer.play();
-                    document.getElementById('play-btn').innerText = '⏸';
-                    status.innerText = '• API SYNC';
-                    status.classList.remove('status-syncing');
-                });
-            } catch(e) {
-                status.innerText = '• SYNC_ERROR';
-            }
+            document.getElementById('recall-msg').value = '';
+            updateRecalls();
         }
 
-        function togglePlay() { 
-            wavesurfer.playPause();
-            document.getElementById('play-btn').innerText = wavesurfer.isPlaying() ? '⏸' : '▶';
+        function updateRecalls() {
+            const trackId = currentTracks[currentIndex].id;
+            const recalls = JSON.parse(localStorage.getItem('recalls') || '{}')[trackId] || [];
+            const list = document.getElementById('recall-list');
+            list.innerHTML = recalls.map(r => `
+                <div class="recall-item" onclick="wavesurfer.setTime(${r.time})">
+                    <b>${format(r.time)}</b>: ${r.msg}
+                </div>
+            `).join('');
         }
 
-        function goToParentFolder() {
-            if (currentTrackParentId) {
-                load(currentTrackParentId);
-                document.getElementById('path-name').innerText = "NAVIGATING...";
-            }
-        }
-
-        function setVol(v) { wavesurfer.setVolume(v); }
-        function skip(v) { wavesurfer.skip(v); }
-        function goHome() { document.getElementById('path-name').innerText = "VAULT"; load(); }
-
-        wavesurfer.on('audioprocess', () => { document.getElementById('curr-time').innerText = format(wavesurfer.getCurrentTime()); });
-        wavesurfer.on('ready', () => { document.getElementById('total-time').innerText = format(wavesurfer.getDuration()); });
-
-        function format(s) {
-            const m = Math.floor(s / 60);
-            const sec = Math.floor(s % 60);
-            return `${m}:${sec < 10 ? '0' : ''}${sec}`;
-        }
+        wavesurfer.on('audioprocess', () => document.getElementById('c-time').innerText = format(wavesurfer.getCurrentTime()));
+        wavesurfer.on('ready', () => document.getElementById('t-time').innerText = format(wavesurfer.getDuration()));
+        function format(s) { const m=Math.floor(s/60); const sec=Math.floor(s%60); return `${m}:${sec<10?'0':''}${sec}`; }
 
         load();
     </script>
